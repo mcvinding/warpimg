@@ -5,7 +5,7 @@ ft_defaults
 
 %% Compute paths
 raw_folder = '/home/share/workshop_source_reconstruction/20180206/MEG/NatMEG_0177/170424';
-data_path = '/home/mikkel/mri_scripts/warpig/data/0177';
+data_path  = '/home/mikkel/mri_warpimg/data/0177';
 
 %% Load data
 cd(data_path)
@@ -16,12 +16,14 @@ load(fullfile(data_path, 'grad'));    % !!!
 
 disp('Done');
 
-data = timelockeds{4};   % Only indexfinger stim.
+evoked = timelockeds{4};   % Only indexfinger stim.
+
+save(fullfile(data_path,'evoked.mat'), 'evoked')
 
 %% Plot topographies
 cfg = [];
 cfg.layout = 'neuromag306mag';
-figure; ft_multiplotER(cfg, data);
+figure; ft_multiplotER(cfg, evoked);
 
 % cfg = [];
 % cfg.viewmode = 'butterfly';
@@ -34,7 +36,7 @@ late_latency    = [0.115 0.155]; % s
 
 cfg = [];
 cfg.channel = 'MEG*';
-meg_data = ft_selectdata(cfg, data);
+meg_data = ft_selectdata(cfg, evoked);
 meg_data.grad = ft_convert_units(grad, 'mm');
 
 %% Plot alignment

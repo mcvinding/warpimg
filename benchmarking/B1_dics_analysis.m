@@ -1,7 +1,6 @@
 %% DICS
 addpath '~/fieldtrip/fieldtrip/'
 addpath '~/fieldtrip/fieldtrip/external/mne'
-ft_defaults
 
 %% Compute paths
 raw_folder = '/home/share/workshop_source_reconstruction/20180206/MEG/NatMEG_0177/170424';
