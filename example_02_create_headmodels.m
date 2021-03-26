@@ -22,7 +22,7 @@ load(fullfile(data_path, 'mri_acpc_resliced.mat'));     % original subject MRI
 
 %% temp
 mri_tmp_resliced = mri_warp2acpc;
-mri_org_resliced = mri_orig;
+mri_org_resliced = mri_o5rig;
 
 %% STEP 2A: Align MRI and MEG headpoints in MEG coordinate system (neuromag)
 % Get headshapes and sensor info from MEG file
