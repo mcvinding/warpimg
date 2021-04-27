@@ -1,172 +1,212 @@
 % LCMV virtual channels
+clear all; close all
 addpath '~/fieldtrip/fieldtrip/'
-addpath '~/fieldtrip/fieldtrip/external/mne'
-ft_defaults 
+ft_defaults
 
-%% Compute paths
-raw_folder = '/home/share/workshop_source_reconstruction/20180206/MEG/NatMEG_0177/170424';
-data_path = '/home/mikkel/mri_scripts/warpig/data/0177';
+%% Data paths
+data_path = '/home/mikkel/mri_warpimg/data/0177';
+ft_path   = '~/fieldtrip/fieldtrip/';
 
 %% Load data
-fprintf('Loading... ')
-% load(fullfile(raw_folder, 'baseline_data.mat'))
-load(fullfile(raw_folder, 'cleaned_downsampled_data.mat'))
-disp('done')
+fprintf('Loading data... ')
+load(fullfile(data_path, 'epo.mat'));
 
-cfg = [];
-cfg.trials = cleaned_downsampled_data.trialinfo==8;
-data = ft_selectdata(cfg, cleaned_downsampled_data);
-
-%% Prepare data
-cfg = [];
-cfg.channel = 'MEG';
-cfg.latency = [-0.2 1.1];
-data_slct = ft_selectdata(cfg, data);
-
-cfg = [];
-cfg.demean = 'yes';
-cfg.baselinewindow = [-inf 0];
-data_bs = ft_preprocessing(cfg, data_slct);
-
-evoked = ft_timelockanalysis([], data_bs);
-
-%% Read atlas
-load(fullfile(data_path,'mri_neuromag_resliced'));
+% Read atlas
 atlas = ft_read_atlas('/home/mikkel/fieldtrip/fieldtrip/template/atlas/aal/ROI_MNI_V4.nii');
-% 
-% atlas = ft_read_atlas('~/fieldtrip/fieldtrip/template/atlas/afni/TTatlas+tlrc.HEAD')
-% 
-% atlas = ft_read_atlas('/home/mikkel/fieldtrip/fieldtrip/template/atlas/spm_anatomy/AllAreas_v17_MPM.mat')
 
-atlas_nmg = ft_convert_coordsys(atlas, 'neuromag', 0, mri_neuromag_resliced);
+% Load MRI
+load(fullfile(data_path,'mri_org_resliced'));
+load(fullfile(data_path,'mri_tmp_resliced'));
 
-%% Load headmodels and source spaces
+% Load headmodels and source spaces
 load(fullfile(data_path, 'headmodel_org.mat'));
 load(fullfile(data_path, 'headmodel_tmp.mat'));
+load(fullfile(data_path, 'sourcemodels_mni.mat'));
+disp('done')
 
-load(fullfile(data_path, 'sourcemodels.mat'));
+%% Calculate avg
+cfg = [];
+evoked = ft_timelockanalysis(cfg, epo);
+
+%% Inspect
+% ft_determine_coordsys(mri_org_resliced, 'interactive', 'no'); hold on;
+% ft_plot_headmodel(headmodel_org, 'facealpha', 0.25, 'facecolor', 'r')
+% ft_plot_mesh(sourcemodel_org.pos(sourcemodel_org.inside,:), 'vertexcolor','b')
+% ft_plot_sens(evoked.grad);
+
+%% Add atlas info to sources
+load(fullfile(ft_path, 'template/sourcemodel/standard_sourcemodel3d6mm'));
+sourcemodel = ft_convert_units(sourcemodel, 'mm');
+
+cfg = [];
+cfg.interpmethod = 'nearest';
+cfg.parameter    = 'tissue';
+tmp = ft_sourceinterpolate(cfg, atlas, sourcemodel);
+tmp.tissuelabel = atlas.tissuelabel;
+
+atlas_grid = ft_checkdata(tmp, 'datatype', 'source');
+atlas_grid.inside = sourcemodel.inside;
 
 %% Make leadfields
 cfg = [];
 cfg.grad            = evoked.grad;    % magnetometer and gradiometer specification
 cfg.channel         = 'meg';
 cfg.senstype        = 'meg';
+cfg.normalize       = 'yes';
+cfg.reducerank      = 2;
 
-cfg.sourcemodel     = sourcemodel_orig;
+% Original
+cfg.sourcemodel     = sourcemodel_org;
 cfg.headmodel       = headmodel_org;
-
 leadfield_org = ft_prepare_leadfield(cfg);
 
+% Template
 cfg.sourcemodel     = sourcemodel_tmp;
 cfg.headmodel       = headmodel_tmp;
 leadfield_tmp = ft_prepare_leadfield(cfg);
 
 %% Make filter
-% Calculate covariance
+% Calculate Kappa
 cfg = [];
 cfg.covariance          = 'yes';
 cfg.covariancewindow    = 'all';
 cfg.channel             = 'MEG';
-data_cov = ft_timelockanalysis(cfg, evoked);
+data_cov = ft_timelockanalysis(cfg, epo);
 
 [u,s,v] = svd(data_cov.cov);
 d       = -diff(log10(diag(s)));
 d       = d./std(d);
 kappa   = find(d>5,1,'first');
+fprintf('Kappa = %i\n', kappa)
 
-% fprintf('Kappa = %i\n', kappa)
+figure;
+semilogy(diag(s),'o-');
 
-% Do source analysis
+%% Do initial source analysis
 cfg = [];
 cfg.method              = 'lcmv';
-cfg.lcmv.kappa          = kappa;
+cfg.channel             = 'meg';
 cfg.lcmv.keepfilter     = 'yes';
-cfg.lcmv.fixedori       = 'no';
-cfg.lcmv.weightnorm     = 'unitnoisegain';
-cfg.lcmv.projectnoise   = 'yes';
+cfg.lcmv.fixedori       = 'yes';
+cfg.lcmv.lambda         = '5%';
+cfg.lcmv.kappa          = kappa;
+cfg.lcmv.projectmom     = 'yes';
 
-cfg.channel             = 'MEG';
-cfg.senstype            = 'MEG';
+% Original
 cfg.headmodel           = headmodel_org;
 cfg.sourcemodel         = leadfield_org;
+source_org = ft_sourceanalysis(cfg, data_cov);
 
-source_org = ft_sourceanalysis(cfg, evoked);
-
+% Template
 cfg.headmodel           = headmodel_tmp;
 cfg.sourcemodel         = leadfield_tmp;
+source_tmp = ft_sourceanalysis(cfg, data_cov);
 
-source_tmp = ft_sourceanalysis(cfg, evoked);
+% add atlas
+source_org.tissue = atlas_grid.tissue;
+source_org.tissuelabel = atlas_grid.tissuelabel;
+source_tmp.tissue = atlas_grid.tissue;
+source_tmp.tissuelabel = atlas_grid.tissuelabel;
 
-%% Interpolate atlas
+%% Find some fun labels
+find(~cellfun(@isempty, strfind(atlas_grid.tissuelabel, 'Postcentral')))
+find(~cellfun(@isempty, strfind(atlas_grid.tissuelabel, 'Thalamus')))
+find(~cellfun(@isempty, strfind(atlas_grid.tissuelabel, 'Cerebellum_4_5')))
+
+labs = [1, 2, 13, 14, 57, 58, 77, 78, 97, 98];
+atlas_grid.tissuelabel(labs)
+
+%% Plot for inspection
 cfg = [];
 cfg.interpmethod = 'nearest';
 cfg.parameter    = 'tissue';
+mri_tst = ft_sourceinterpolate(cfg, source_org, mri_org_resliced);
 
-atlas_org = ft_sourceinterpolate(cfg, atlas_nmg, source_org);
-atlas_org.pos = source_org.pos;
-
-atlas_tmp = ft_sourceinterpolate(cfg, atlas_nmg, source_tmp);
-atlas_tmp.pos = source_tmp.pos;
-
-% TEST
-load(fullfile(data_path,'mri_tmp_resliced'));
-
-cfg = [];
-cfg.interpmethod = 'nearest';
-cfg.parameter    = 'tissue';
-mri_tst = ft_sourceinterpolate(cfg, atlas_tmp, mri_tmp_resliced);
+mri_tst.tissue(~ismember(mri_tst.tissue, labs)) = 0;
+mri_tst.tissue(ismember(mri_tst.tissue, labs)) = 1;
+mri_tst.tissuelabel = {'ROI'};
 
 cfg = [];
 cfg.funparameter = 'tissue';
-% cfg.downsample = 2;
+cfg.anaparameter = 'anatomy';
+% cfg.funcolormap  = 'lines';
 ft_sourceplot(cfg, mri_tst)
 
 %% Make virtual channel
 cfg = [];
 cfg.parcellation = 'tissue';
-cfg.parcel       = {'Precentral_R', 'Precentral_L'};
-% cfg.method       = 'eig'
-vrtchannls_org = ft_virtualchannel(cfg, data_bs, source_org, atlas_org);
-vrtchannls_tmp = ft_virtualchannel(cfg, data_bs, source_tmp, atlas_tmp);
+cfg.parcel       = source_org.tissuelabel(labs);    %{'Precentral_L', 'Precentral_R'};
+cfg.method       = 'svd';
+vrtchannls_org = ft_virtualchannel(cfg, epo, source_org);
+vrtchannls_tmp = ft_virtualchannel(cfg, epo, source_tmp);
 
 % Average
 vrtavg_org = ft_timelockanalysis([], vrtchannls_org);
 vrtavg_tmp = ft_timelockanalysis([], vrtchannls_tmp);
 
+%% Save
+fprintf('Saving... ')
+save(fullfile(data_path, 'vrtavg_org.mat'), 'vrtavg_org')
+save(fullfile(data_path, 'vrtavg_tmp.mat'), 'vrtavg_tmp')
+disp('done')
+
 %% Plot
-subplot(2,2,1); 
+xx = [min(vrtavg_org.time),max(vrtavg_org.time)];
+yy = [-8e-10 8e-10];
+
+figure;
+subplot(5,2,1); 
 plot(vrtavg_org.time, vrtavg_org.avg(1,:), 'b'); hold on
 plot(vrtavg_tmp.time, vrtavg_tmp.avg(1,:), 'r')
-title('Left precentral ROI'); xlim([min(vrtavg_org.time),max(vrtavg_org.time)])
-subplot(2,2,2); 
+title(vrtavg_org.label(1)); xlim(xx); ylim(yy)
+
+subplot(5,2,2); 
 plot(vrtavg_org.time, vrtavg_org.avg(2,:), 'b'); hold on
 plot(vrtavg_tmp.time, vrtavg_tmp.avg(2,:), 'r')
-title('Right precentral ROI'); xlim([min(vrtavg_org.time),max(vrtavg_org.time)])
+title(vrtavg_org.label(2)); xlim(xx); ylim(yy)
 
-subplot(2,2,3)
-scatter(vrtavg_org.avg(1,:), vrtavg_tmp.avg(1,:), 'k')
+subplot(5,2,3)
+plot(vrtavg_org.time, vrtavg_org.avg(3,:), 'b'); hold on
+plot(vrtavg_tmp.time, vrtavg_tmp.avg(3,:), 'r')
+title(vrtavg_org.label(3)); xlim(xx); ylim(yy)
 
-subplot(2,2,4)
-scatter(vrtavg_org.avg(2,:), vrtavg_tmp.avg(2,:), 'k')
+subplot(5,2,4)
+plot(vrtavg_org.time, vrtavg_org.avg(4,:), 'b'); hold on
+plot(vrtavg_tmp.time, vrtavg_tmp.avg(4,:), 'r')
+title(vrtavg_org.label(4)); xlim(xx); ylim(yy)
 
-corr(vrtavg_org.avg(1,:)', vrtavg_tmp.avg(1,:)')
-corr(vrtavg_org.avg(2,:)', vrtavg_tmp.avg(2,:)')
+subplot(5,2,5)
+plot(vrtavg_org.time, vrtavg_org.avg(5,:), 'b'); hold on
+plot(vrtavg_tmp.time, vrtavg_tmp.avg(5,:), 'r')
+title(vrtavg_org.label(5)); xlim(xx); ylim(yy)
 
-%% Kripps
-% addpath
+subplot(5,2,6)
+plot(vrtavg_org.time, vrtavg_org.avg(6,:), 'b'); hold on
+plot(vrtavg_tmp.time, vrtavg_tmp.avg(6,:), 'r')
+title(vrtavg_org.label(6)); xlim(xx); ylim(yy)
+
+subplot(5,2,7)
+plot(vrtavg_org.time, vrtavg_org.avg(7,:), 'b'); hold on
+plot(vrtavg_tmp.time, vrtavg_tmp.avg(7,:), 'r')
+title(vrtavg_org.label(7)); xlim(xx); ylim(yy)
+
+subplot(5,2,8)
+plot(vrtavg_org.time, vrtavg_org.avg(8,:), 'b'); hold on
+plot(vrtavg_tmp.time, vrtavg_tmp.avg(8,:), 'r')
+title(vrtavg_org.label(8)); xlim(xx); ylim(yy)
+
+subplot(5,2,9)
+plot(vrtavg_org.time, vrtavg_org.avg(9,:), 'b'); hold on
+plot(vrtavg_tmp.time, vrtavg_tmp.avg(9,:), 'r')
+title(vrtavg_org.label(9)); xlim(xx); ylim(yy)
+
+subplot(5,2,10)
+plot(vrtavg_org.time, vrtavg_org.avg(10,:), 'b'); hold on
+plot(vrtavg_tmp.time, vrtavg_tmp.avg(10,:), 'r')
+title(vrtavg_org.label(10)); xlim(xx); ylim(yy)
 
 
+% corr(vrtavg_org.avg(1,:)', vrtavg_tmp.avg(1,:)')
+% corr(vrtavg_org.avg(2,:)', vrtavg_tmp.avg(2,:)')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+%END

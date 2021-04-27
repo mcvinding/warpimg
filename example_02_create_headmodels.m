@@ -8,13 +8,9 @@ addpath '~/fieldtrip/fieldtrip/'
 addpath '~/fieldtrip/fieldtrip/external/mne'
 ft_defaults
 
-%% Compute paths
-subjs = {'0177'};
-
-subj = 1;
-
+%% Data paths
 raw_folder = '/home/share/workshop_source_reconstruction/20180206/MEG/NatMEG_0177/170424';
-data_path  = fullfile('/home/mikkel/mri_scripts/warpig/data/',subjs{subj});
+data_path = '/home/mikkel/mri_scripts/warpig/data/0177';
 
 %% Load MRI
 load(fullfile(data_path, 'mri_warp2acpc.mat'));         % Warped template MRI
@@ -82,6 +78,7 @@ cfg = [];
 cfg.output = 'brain';
 mri_tmp_seg = ft_volumesegment(cfg, mri_tmp_resliced);
 mri_org_seg = ft_volumesegment(cfg, mri_org_resliced);
+mri_org_segT = ft_volumesegment(cfg, mri_org_resliced);
 
 % Save 
 save(fullfile(data_path, 'mri_tmp_seg.mat'), 'mri_tmp_seg')
@@ -100,6 +97,7 @@ ft_sourceplot(cfg, mri_org_seg);
 % Plot both segmentations on original volume
 pltvol = mri_org_resliced;
 pltvol.brain = mri_tmp_seg.brain+mri_org_seg.brain;
+pltvol.brain = mri_org_segT.brain+mri_org_seg.brain;
 
 cfg.anaparameter = 'anatomy';
 cfg.funparameter = 'brain';

@@ -1,76 +1,33 @@
 %% Comparison of MNE models
+% Creating source spaces was done with the ft_postfreesurferscript (in
+% fieldtrip/bin) using the function in the HCPpipelines tools. For more
+% information see the documentation for ft_postfreesurferscript.
 addpath '~/fieldtrip/fieldtrip/'
-addpath '~/fieldtrip/fieldtrip/external/mne'
 ft_defaults
+addpath '~/fieldtrip/fieldtrip/external/mne'
 
 %% Compute paths
-% raw_folder = '/home/share/workshop_source_reconstruction/20180206/MEG/NatMEG_0177/170424';
-% data_path = '/home/mikkel/mri_scripts/warpig/data/0177';
 data_path = '/home/mikkel/mri_warpimg/data/0177';
 fs_subject_dir = '/home/mikkel/mri_warpimg/fs_subjects_dir';
 raw_folder = '/home/share/workshop_source_reconstruction/20180206/MEG/NatMEG_0177/170424';
 
+mneOrg_outFname = fullfile(data_path, 'mnesource_org.mat');
+mneTmp_outFname = fullfile(data_path, 'mnesource_tmp.mat');
+
 %% Load data
 fprintf('Loading... ')
-% load(fullfile(raw_folder, 'baseline_data.mat'))
-load(fullfile(data_path, 'cleaned_downsampled_data.mat'))
+load(fullfile(data_path, 'evoked.mat'));
+load(fullfile(data_path, 'epo.mat'));
 disp('done')
-
-cfg = [];
-cfg.trials = cleaned_downsampled_data.trialinfo==8;
-data = ft_selectdata(cfg, cleaned_downsampled_data);
-
-%% Prepare data
-cfg = [];
-cfg.channel = 'meggrad';
-cfg.latency = [-0.2 0.8];
-data_slct = ft_selectdata(cfg, data);
-
-cfg = [];
-cfg.demean = 'yes';
-cfg.baselinewindow = [-inf 0];
-data_bs = ft_preprocessing(cfg, data_slct);
-
-cfg = [];
-cfg.covariance          = 'yes';
-cfg.covariancewindow    = 'prestim';
-evoked = ft_timelockanalysis(cfg, data_bs);
 
 %% Get source space
 % It is important that you use T1.mgz instead of orig.mgz as T1.mgz is normalized to [255,255,255] dimension
 mridata_org     = fullfile(fs_subject_dir, '0177/mri/T1.mgz');
-% transf_org      = fullfile(data_path, '0177orig-trans.fif');
-% srcFname_org    = fullfile(data_path, 'orig-src.fif');
-
 mridata_tmp     = fullfile(fs_subject_dir, '0177warp/mri/T1.mgz');
-% transf_tmp      = fullfile(data_path, '0177warp-trans.fif');
-% srcFname_tmp    = fullfile(data_path, 'warp-src.fif');
 
-% Define outputs
-srcOrg_outFname = fullfile(data_path, 'org_surf.mat');
-srcTmp_outFname = fullfile(data_path, 'tmp_surf.mat');
-
-mneOrg_outFname = fullfile(data_path, 'org_mne.mat');
-mneTmp_outFname = fullfile(data_path, 'tmp_mne.mat');
-
-%% Read transformation (head -> MRI)
-% Orig
-% trans_org = fiff_read_coord_trans(transf_org);
-% % In FieldTrip every thing is in head cordinate therefore in next line we are inverting the transformation
-% tra_org.trans=inv(trans_org.trans);
-% 
-% % Template
-% trans_tmp = fiff_read_coord_trans(transf_tmp);
-% tra_tmp.trans=inv(trans_tmp.trans);
-
-%% Read MRI (does not work on Win PC)
-% Orig
+% Read MRI (does not work on Win PC)
 mri_org = ft_read_mri(mridata_org);
-% mri_org = ft_convert_units(mri_org, 'cm');
-
-% Template
 mri_tmp = ft_read_mri(mridata_tmp);
-% mri_tmp = ft_convert_units(mri_tmp, 'mm');
 
 %% Reading FreeSurfer Source Space
 srcFname_orgL = fullfile(fs_subject_dir, '0177/workbench/0177.L.white.4k_fs_LR.surf.gii');
@@ -109,9 +66,10 @@ cfg.headshape.headshape = headshape;
 cfg.headshape.icp       = 'yes';
 cfg.coordsys            = 'neuromag';
 mri_org_realign2 = ft_volumerealign(cfg, mri_org);
+
 % Inspect
-% cfg.headshape.icp       = 'no';
-% mri_org_realign3 = ft_volumerealign(cfg, mri_org_realign2);
+cfg.headshape.icp       = 'no';
+mri_org_realign3 = ft_volumerealign(cfg, mri_org_realign2);
 
 mri_tmp.coordsys = 'neuromag';
 cfg = [];
@@ -120,6 +78,7 @@ cfg.headshape.headshape = headshape;
 cfg.headshape.icp       = 'yes';
 cfg.coordsys            = 'neuromag';
 mri_tmp_realign2 = ft_volumerealign(cfg, mri_tmp);
+
 % Inspect
 cfg.headshape.icp       = 'no';
 mri_tmp_realign3 = ft_volumerealign(cfg, mri_tmp_realign2);
@@ -133,7 +92,7 @@ To = mri_org_realign2.transform*inv(mri_org_realign2.transformorig);
 surfsrc_org = ft_transform_geometry(To, src_org);
 
 Tt = mri_tmp_realign2.transform*inv(mri_tmp_realign2.transformorig);
-surfsrc_tmp = ft_transform_geometry(Tt, src_tmp)
+surfsrc_tmp = ft_transform_geometry(Tt, src_tmp);
 
 %% Plot for inspection
 ft_determine_coordsys(mri_org_resliced, 'interactive', 'no');  hold on;
@@ -209,23 +168,42 @@ save(srcOrg_outFname, 'surfsrc_org', '-v7.3');
 save(srcTmp_outFname, 'surfsrc_tmp', '-v7.3');
 disp('DONE')
 
-%% Leadfields
-% cfg = [];
-% cfg.covariance          = 'yes';
-% cfg.covariancewindow    = 'all';
-% cfg.channel             = 'MEG';
-% data_cov = ft_timelockanalysis(cfg, evoked);
-% 
-% [u,s,v] = svd(data_cov.cov);
-% d       = -diff(log10(diag(s)));
-% d       = d./std(d);
-% kappa   = find(d>5,1,'first');
+%% Whiten data
+cfg = [];
+cfg.covariance          = 'yes';
+cfg.covariancewindow    = 'prestim';
+cfg.channel             = 'MEG';
+data_cov = ft_timelockanalysis(cfg, epo);
 
-% Original
+[u,s,v] = svd(data_cov.cov);
+d       = -diff(log10(diag(s)));
+d       = d./std(d);
+kappa   = find(d>5,1,'first');
+
+cfg            = [];
+cfg.channel    = 'meg';
+cfg.kappa      = kappa;
+dataw_meg      = ft_denoise_prewhiten(cfg, epo, data_cov);
+
+cfg = [];
+cfg.preproc.demean          = 'yes';
+cfg.preproc.baselinewindow  = [-inf 0];
+cfg.covariance              = 'yes';
+cfg.covariancewindow        = 'prestim';
+evoked = ft_timelockanalysis(cfg, dataw_meg);
+
+% Plot
+cfg = [];
+cfg.layout = 'neuromag306all.lay';
+ft_multiplotER(cfg, evoked);
+
+%% Leadfields
 cfg = [];
 cfg.grad                = evoked.grad;     % sensor positions
-cfg.channel             = 'meggrad';           % the used channels
+cfg.channel             = 'meg';          % the used channels
 cfg.senstype            = 'meg';
+
+% Original
 cfg.sourcemodel         = surfsrc_org;          % source points
 cfg.headmodel           = headmodel_org;          % volume conduction model
 lf_org = ft_prepare_leadfield(cfg, evoked);
@@ -251,12 +229,6 @@ cfg.sourcemodel         = lf_tmp;
 cfg.headmodel           = headmodel_tmp;
 mnesource_tmp  = ft_sourceanalysis(cfg, evoked);
 
-%% Save source
-disp('Saving...');
-save(mneOrg_outFname, 'mnesource_org', '-v7.3');
-save(mneTmp_outFname, 'mnesource_tmp', '-v7.3');
-disp('DONE')
-
 %% Inspect
 
 cfg = [];
@@ -267,37 +239,44 @@ cfg = [];
 cfg.funparameter = 'pow';
 figure; ft_sourcemovie(cfg, mnesource_tmp);
 
+%% Save source
+disp('Saving...');
+save(mneOrg_outFname, 'mnesource_org', '-v7.3');
+save(mneTmp_outFname, 'mnesource_tmp', '-v7.3');
+disp('DONE')
+
 %% Plot
-cfg = [];
-cfg.method          = 'surface';
-cfg.funparameter    = 'pow';
-cfg.funcolormap     = 'jet';    % Change for better color options
-cfg.latency         = .100;     % The time-point to plot (s)
-cfg.colorbar        = 'no';
+times = [0.050 0.100 0.150 0.200 0.250];
 
-tst = mnesource_org;
-tst.avg.pow = log(mnesource_tmp.avg.pow./mnesource_org.avg.pow);
+lw = min([mnesource_org.avg.pow(:); mnesource_tmp.avg.pow(:)]);
+up = max([mnesource_org.avg.pow(:); mnesource_tmp.avg.pow(:)]);
+up = up - 0.50*up;
 
-ft_sourceplot(cfg, mnesource_org); title('Orig MRI')
-ft_sourceplot(cfg, mnesource_tmp); title('Warped template MRI')
-ft_sourceplot(cfg, tst); title('Log-ratio')
+logdiff = mnesource_org;
+logdiff.avg.pow = log(mnesource_tmp.avg.pow)-log(mnesource_org.avg.pow);
 
+for tt = 1:length(times)
+    cfg = [];
+    cfg.method          = 'surface';
+    cfg.funparameter    = 'pow';
+    cfg.funcolormap     = 'OrRd';    % Change for better color options
+    cfg.latency         = times(tt);     % The time-point to plot (s)
+    cfg.colorbar        = 'no';
+    cfg.funcolorlim     = [lw, up];
+    
+    ft_sourceplot(cfg, mnesource_org); 
+    title(['Original MRI (',num2str(times(tt)*1000),' ms)']);
+    view([0 0 1])
+    
+    ft_sourceplot(cfg, mnesource_tmp); 
+    title(['Warped template MRI (',num2str(times(tt)*1000),' ms)'])
+    view([0 0 1])
 
-% How to compare when sposition is different between source models
+    cfg.funcolormap     = 'RdBu';    % Change for better color options
+    cfg.funcolorlim     = [min(logdiff.avg.pow(:)), max(logdiff.avg.pow(:))];
+    ft_sourceplot(cfg, logdiff); 
+    title(['Log-ratio (',num2str(times(tt)*1000),' ms)'])
+    view([0 0 1])
+end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+%END
