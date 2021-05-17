@@ -255,6 +255,7 @@ up = up - 0.50*up;
 logdiff = mnesource_org;
 logdiff.avg.pow = log(mnesource_tmp.avg.pow)-log(mnesource_org.avg.pow);
 
+cd('/home/mikkel/mri_warpimg/figures')
 for tt = 1:length(times)
     cfg = [];
     cfg.method          = 'surface';
@@ -268,15 +269,24 @@ for tt = 1:length(times)
     title(['Original MRI (',num2str(times(tt)*1000),' ms)']);
     view([0 0 1])
     
+    fname = ['mne_org',num2str(times(tt)*1000),'.png'];
+    print(fname, '-dpng'); close
+    
     ft_sourceplot(cfg, mnesource_tmp); 
     title(['Warped template MRI (',num2str(times(tt)*1000),' ms)'])
     view([0 0 1])
 
+    fname = ['mne_tmp',num2str(times(tt)*1000),'.png'];
+    print(fname, '-dpng'); close
+    
     cfg.funcolormap     = 'RdBu';    % Change for better color options
     cfg.funcolorlim     = [min(logdiff.avg.pow(:)), max(logdiff.avg.pow(:))];
     ft_sourceplot(cfg, logdiff); 
     title(['Log-ratio (',num2str(times(tt)*1000),' ms)'])
     view([0 0 1])
+    
+    fname = ['mne_dif',num2str(times(tt)*1000),'.png'];
+    print(fname, '-dpng'); close
 end
 
 %END

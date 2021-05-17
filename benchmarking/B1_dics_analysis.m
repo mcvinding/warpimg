@@ -97,6 +97,12 @@ cfg.sourcemodel.filter = dics_combined_tmp.avg.filter;
 dics_desy_tmp = ft_sourceanalysis(cfg, pow_desync);
 dics_base_tmp = ft_sourceanalysis(cfg, pow_baseline);
     
+%% Save
+fprintf('Saving... ')
+save(fullfile(data_path, 'dics_org'), 'dics_desy_org', 'dics_base_org');
+save(fullfile(data_path, 'dics_tmp'), 'dics_desy_tmp', 'dics_base_tmp');
+disp('done')
+
 %% Contrast
 cfg = [];
 cfg.operation   = '(x1-x2)/(x1+x2)';
@@ -112,7 +118,7 @@ disp('done')
 %% Load resliced MRI
 load(fullfile(data_path, 'mri_tmp_resliced.mat'));
 load(fullfile(data_path, 'mri_org_resliced.mat'));
-mri_org_resliced.anatomy(mri_org_resliced.anatomy>7500) = 7500;
+mri_org_resliced.anatomy(mri_org_resliced.anatomy>5000) = 5000;
 
 %% Plot original result
 cfg = [];
@@ -122,13 +128,15 @@ beam_int_org = ft_sourceinterpolate(cfg, contrast_org, mri_org_resliced);
 
 [~, idx] = min(beam_int_org.pow);
 cfg = [];
-cfg.method       = 'ortho';
-cfg.funparameter = 'pow';
-cfg.location = beam_int_org.pos(idx,:);
+cfg.method          = 'ortho';
+cfg.funparameter    = 'pow';
+cfg.location        = beam_int_org.pos(idx,:);
+cfg.funcolorlim     = [-0.15 0.15];
+cfg.crosshair       = 'no';
 
 ft_sourceplot(cfg, beam_int_org);
-print(fullfile(out_path, 'dics_org.png'), '-dpng')
 
+print(fullfile(out_path, 'dics_org.png'), '-dpng')
 
 %% Plot template result
 cfg = [];
@@ -136,13 +144,76 @@ cfg.downsample  = 2;
 cfg.parameter   = 'pow';
 beam_int_tmp = ft_sourceinterpolate(cfg, contrast_tmp, mri_tmp_resliced);
 
-[~, idx] = min(beam_int_tmp.pow);
+% [~, idx] = min(beam_int_tmp.pow);
 cfg = [];
-cfg.method       = 'ortho';
-cfg.funparameter = 'pow';
-cfg.location = beam_int_tmp.pos(idx,:);
+cfg.method          = 'ortho';
+cfg.funparameter    = 'pow';
+cfg.location        = beam_int_tmp.pos(idx,:);
+cfg.funcolorlim     = [-0.15 0.15];
+cfg.crosshair       = 'no';
 
-ft_sourceplot(cfg, beam_int_tmp);    
+ft_sourceplot(cfg, beam_int_tmp);
+
 print(fullfile(out_path, 'dics_tmp.png'), '-dpng')
+
+%% Plot difference
+contrast_tmp_norm.pos = contrast_org.pos;
+
+cfg = [];
+cfg.parameter   = 'pow';
+cfg.operation   = 'subtract';
+contrast_diff = ft_math(cfg, contrast_org, contrast_tmp_norm);
+
+% Interpolate
+cfg = [];
+cfg.downsample  = 2;
+cfg.parameter   = 'pow';
+diff_int = ft_sourceinterpolate(cfg, contrast_diff, mri_org_resliced);
+
+%plot
+cfg = [];
+cfg.method          = 'ortho';
+cfg.funparameter    = 'pow';
+cfg.location        = diff_int.pos(idx,:);
+cfg.funcolorlim     = [-0.15 0.15];
+cfg.crosshair       = 'no';
+
+ft_sourceplot(cfg, diff_int);
+
+print(fullfile(out_path, 'dics_dif.png'), '-dpng')
+
+%% 
+figure;
+set(gcf,'Position',[0 0 1000 400])
+
+subplot(1,3,1); hold on
+histogram(log(dics_desy_org.avg.pow))
+histogram(log(dics_desy_tmp.avg.pow))
+legend('Original MRI','Warped template')
+xlabel('Log-power')
+title('Desync. power')
+
+subplot(1,3,2); hold on
+histogram(log(dics_base_org.avg.pow))
+histogram(log(dics_base_tmp.avg.pow))
+legend('Original MRI','Warped template')
+xlabel('Log-power')
+title('Baseline power')
+
+subplot(2,3,3);
+scatter(log(dics_desy_org.avg.pow), log(dics_desy_tmp.avg.pow), '.k')
+xlim([-6 6]); ylim([-6 6])
+% xlabel('Log-power (orig. MRI)')
+ylabel('Log-power (warp temp.)')
+title('Desync. power')
+
+subplot(2,3,6);
+scatter(log(dics_base_org.avg.pow), log(dics_base_tmp.avg.pow), '.k')
+xlim([-6 6]); ylim([-6 6])
+xlabel('Log-power (orig. MRI)')
+ylabel('Log-power (warp temp.)')
+title('Baseline power')
+
+print(fullfile(out_path, 'dics_summary.png'), '-dpng')
 
 %END

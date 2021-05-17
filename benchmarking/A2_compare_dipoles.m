@@ -21,8 +21,8 @@ load(fullfile(data_path, 'mri_tmp_resliced'));
 load(fullfile(data_path, 'mri_org_resliced'));
 disp('done')
 
-%% Rescale MRI intensity for plotting
-mri_org_resliced.anatomy(mri_org_resliced.anatomy>7500) = 7500;
+% Rescale MRI intensity for plotting
+mri_org_resliced.anatomy(mri_org_resliced.anatomy>5000) = 5000;
 
 %% Inspect
 figure; hold on
@@ -42,11 +42,12 @@ plot(dip_mag_early_tmp.time, dip_mag_early_tmp.dip.rv)
 %%
 figure; hold on
 pos = dip_mag_early_tmp.dip.pos;
-ft_plot_slice(mri_org_resliced.anatomy, 'transform', mri_org_resliced.transform,'location', pos, 'orientation', [1 0 0]); hold on
+ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_org_resliced.transform,'location', pos, 'orientation', [1 0 0]); hold on
 ft_plot_slice(mri_org_resliced.anatomy, 'transform', mri_org_resliced.transform,'location', pos, 'orientation', [0 1 0]); hold on
 ft_plot_slice(mri_org_resliced.anatomy, 'transform', mri_org_resliced.transform,'location', pos, 'orientation', [0 0 1]); hold on
 ft_plot_dipole(dip_mag_early_org.dip.pos, mean(dip_mag_early_org.dip.mom,2), 'size',2, 'unit', 'mm','color','b'); hold on
 ft_plot_dipole(dip_mag_early_tmp.dip.pos, mean(dip_mag_early_tmp.dip.mom,2), 'size',2, 'unit', 'mm'); hold on
+view([1 0 0])
 
 %% Compare dip: mags late component
 norm(dip_mag_late_org.dip.pos(1,:)-dip_mag_late_tmp.dip.pos(1,:))
@@ -58,9 +59,9 @@ plot(dip_mag_late_tmp.time,dip_mag_late_tmp.dip.rv)
 
 figure; hold on
 pos = mean(dip_mag_late_tmp.dip.pos(1,:),1);
-ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_tmp_resliced.transform,'location', pos,'orientation', [1 0 0]); hold on
+% ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_tmp_resliced.transform,'location', pos,'orientation', [1 0 0]); hold on
 ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_tmp_resliced.transform,'location', pos,'orientation', [0 1 0]); hold on
-ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_tmp_resliced.transform,'location', pos,'orientation', [0 0 1]); hold on
+% ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_tmp_resliced.transform,'location', pos,'orientation', [0 0 1]); hold on
 ft_plot_dipole(dip_mag_late_tmp.dip.pos(1,:), mean(dip_mag_late_tmp.dip.mom(1:3,:),2), 'size',2, 'unit', 'mm'); hold on
 ft_plot_dipole(dip_mag_late_tmp.dip.pos(2,:), mean(dip_mag_late_tmp.dip.mom(4:6,:),2), 'size',2, 'unit', 'mm'); hold on
 ft_plot_dipole(dip_mag_late_org.dip.pos(1,:), mean(dip_mag_late_org.dip.mom(1:3,:),2), 'size',2, 'unit', 'mm','color','b'); hold on
@@ -82,6 +83,30 @@ norm(dip_grad_early_org.dip.pos-dip_grad_early_tmp.dip.pos)
 %% Compare dip: grads late component
 norm(dip_grad_late_org.dip.pos(1,:)-dip_grad_late_tmp.dip.pos(1,:))
 norm(dip_grad_late_org.dip.pos(2,:)-dip_grad_late_tmp.dip.pos(2,:))
+
+%% plot
+figure; hold on
+pos = dip_mag_early_tmp.dip.pos;
+% ft_plot_slice(mri_org_resliced.anatomy, 'transform', mri_org_resliced.transform,'location', pos, 'orientation', [1 0 0]); hold on
+ft_plot_slice(mri_org_resliced.anatomy, 'transform', mri_org_resliced.transform,'location', pos, 'orientation', [0 1 0]); hold on
+% ft_plot_slice(mri_org_resliced.anatomy, 'transform', mri_org_resliced.transform,'location', pos, 'orientation', [0 0 1]);
+ft_plot_dipole(dip_grad_early_org.dip.pos, mean(dip_grad_early_org.dip.mom,2), 'size', 5, 'unit', 'mm', 'color','b');
+ft_plot_dipole(dip_grad_early_tmp.dip.pos, mean(dip_grad_early_tmp.dip.mom,2), 'size', 5, 'unit', 'mm');
+view([0 1 0])
+
+%%
+
+figure; hold on
+pos = mean(dip_mag_late_tmp.dip.pos(1,:),1);
+% ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_tmp_resliced.transform,'location', pos,'orientation', [1 0 0]); hold on
+ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_tmp_resliced.transform,'location', pos,'orientation', [0 1 0]); hold on
+% ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_tmp_resliced.transform,'location', pos,'orientation', [0 0 1]); hold on
+ft_plot_dipole(dip_grad_late_tmp.dip.pos(1,:), mean(dip_grad_late_tmp.dip.mom(1:3,:),2), 'size',2, 'unit', 'mm'); hold on
+ft_plot_dipole(dip_grad_late_tmp.dip.pos(2,:), mean(dip_grad_late_tmp.dip.mom(4:6,:),2), 'size',2, 'unit', 'mm'); hold on
+ft_plot_dipole(dip_grad_late_org.dip.pos(1,:), mean(dip_grad_late_org.dip.mom(1:3,:),2), 'size',2, 'unit', 'mm','color','b'); hold on
+ft_plot_dipole(dip_grad_late_org.dip.pos(2,:), mean(dip_grad_late_org.dip.mom(4:6,:),2), 'size',2, 'unit', 'mm','color','b'); hold on
+
+
 
 %% Full time
 % Mags

@@ -12,7 +12,7 @@ fprintf('Loading data... ')
 load(fullfile(data_path, 'epo.mat'));
 
 % Read atlas
-atlas = ft_read_atlas('/home/mikkel/fieldtrip/fieldtrip/template/atlas/aal/ROI_MNI_V4.nii');
+atlas = ft_read_atlas(fullfile(ft_path, '/template/atlas/aal/ROI_MNI_V4.nii'));
 
 % Load MRI
 load(fullfile(data_path,'mri_org_resliced'));
