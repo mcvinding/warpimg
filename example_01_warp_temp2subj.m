@@ -14,7 +14,7 @@ end
 addpath(ftpath)
 ft_defaults 
 
-%% Subject
+%% Subjects
 subjs = {'0177'};
 
 %% Paths
@@ -182,10 +182,14 @@ disp('done')
 
 %% Preapre for Freesurfer
 % Save in mgz format in a Freesurfer subject directory to run Freesurfer's
-% recon-all later (only works on Linux). HEre it saves both the original
+% recon-all later (only works on Linux). Here it saves both the original
 % and the warped template for comparison.
-load(fullfile(sub_path,'mri_warp2neuromag.mat'))
-load(fullfile(sub_path, 'mri_acpc_neuromag.mat'))
+load(fullfile(sub_path, 'mri_warp2acpc.mat'))
+load(fullfile(sub_path, 'mri_orig.mat'))
+
+% Load template MRI
+load standard_mri           % Load Colin 27
+mri_colin = mri;            % Rename to avoid confusion
 
 % Freesurder $SUBJECTS_DIR path
 fs_subjdir = '/home/mikkel/mri_warpimg/fs_subjects_dir/';
@@ -204,4 +208,10 @@ cfg.filetype    = 'mgz';
 cfg.parameter   = 'anatomy';
 ft_volumewrite(cfg, mri_orig);
 
+% Original template
+cfg = [];
+cfg.filename    = fullfile(fs_subjdir, 'colin', 'mri','orig', '001');
+cfg.filetype    = 'mgz';
+cfg.parameter   = 'anatomy';
+ft_volumewrite(cfg, mri_colin);
 % END
