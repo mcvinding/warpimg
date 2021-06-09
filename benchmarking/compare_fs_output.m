@@ -75,44 +75,61 @@ title('Mean Curvature')
 %% Comparison
 addpath('/home/mikkel/reliability_analysis/') %https://github.com/mcvinding/reliability_analysis
 
-%
-dat1 = [fs_dat_org.SurfArea'; fs_dat_tmp.SurfArea'];
-dat2 = [fs_dat_col.SurfArea'; fs_dat_tmp.SurfArea'];
+%% Surface area
+dat_ot = [fs_dat_org.SurfArea'; fs_dat_tmp.SurfArea'];
+dat_tt = [fs_dat_col.SurfArea'; fs_dat_tmp.SurfArea'];
 
-a_surfArea_ot = reliability_analysis(dat1, 'n2fast');
-a_surfArea_tt = reliability_analysis(dat2, 'n2fast');
+a_surfArea_ot = reliability_analysis(dat_ot, 'n2fast');
+a_surfArea_tt = reliability_analysis(dat_tt, 'n2fast');
 
-% [h, p, ~, stat] = ttest(fs_dat_org.SurfArea, fs_dat_tmp.SurfArea)
-% [h, p, ~, stat] = ttest(fs_dat_col.SurfArea, fs_dat_tmp.SurfArea)
+[icca_surfArea_ot, lb, ub] = ICC(dat_ot', 'A-1');
+[iccc_surfArea_ot, lb, ub] = ICC(dat_ot', 'C-1');
 
-%
-dat1 = [fs_dat_org.GrayVol'; fs_dat_tmp.GrayVol'];
-dat2 = [fs_dat_col.GrayVol'; fs_dat_tmp.GrayVol'];
-
-a_grayVol_ot = reliability_analysis(dat1, 'n2fast');
-a_grayVol_tt = reliability_analysis(dat2, 'n2fast');
-
-[h, p, ~, stat] = ttest(fs_dat_org.GrayVol, fs_dat_tmp.GrayVol)
-[h, p, ~, stat] = ttest(fs_dat_col.GrayVol, fs_dat_tmp.GrayVol)
-
-%
-dat1 = [fs_dat_org.ThickAvg'; fs_dat_tmp.ThickAvg'];
-dat2 = [fs_dat_col.ThickAvg'; fs_dat_tmp.ThickAvg'];
-
-a_thickAvg_ot = reliability_analysis(dat1, 'n2fast');
-a_thickAvg_tt = reliability_analysis(dat2, 'n2fast');
-
-[h, p, ~, stat] = ttest(fs_dat_org.GrayVol, fs_dat_tmp.GrayVol)
-[h, p, ~, stat] = ttest(fs_dat_col.GrayVol, fs_dat_tmp.GrayVol)
-
-%
-dat1 = [fs_dat_org.MeanCurv'; fs_dat_tmp.MeanCurv'];
-dat2 = [fs_dat_col.MeanCurv'; fs_dat_tmp.MeanCurv'];
-
-a_meanCurv_ot = reliability_analysis(dat1, 'n2fast');
-a_meanCurv_tt = reliability_analysis(dat2, 'n2fast');
-
-[h, p, ~, stat] = ttest(fs_dat_org.MeanCurv, fs_dat_tmp.MeanCurv)
-[h, p, ~, stat] = ttest(fs_dat_col.MeanCurv, fs_dat_tmp.MeanCurv)
+[icca_surfArea_tt, lb, ub] = ICC(dat_tt', 'A-1');
+[iccc_surfArea_tt, lb, ub] = ICC(dat_tt', 'C-1');
 
 
+%% Gray matter volume
+dat_ot = [fs_dat_org.GrayVol'; fs_dat_tmp.GrayVol'];
+dat_tt = [fs_dat_col.GrayVol'; fs_dat_tmp.GrayVol'];
+
+a_grayVol_ot = reliability_analysis(dat_ot, 'n2fast');
+a_grayVol_tt = reliability_analysis(dat_tt, 'n2fast');
+
+[icca_grayVol_ot, lb, ub] = ICC(dat_ot', 'A-1');
+[iccc_grayVol_ot, lb, ub] = ICC(dat_ot', 'C-1');
+
+[icca_grayVol_tt, lb, ub] = ICC(dat_tt', 'A-1');
+[iccc_grayVol_tt, lb, ub] = ICC(dat_tt', 'C-1');
+
+
+%% Avererage cortical thickness
+dat_ot = [fs_dat_org.ThickAvg'; fs_dat_tmp.ThickAvg'];
+dat_tt = [fs_dat_col.ThickAvg'; fs_dat_tmp.ThickAvg'];
+
+a_thickAvg_ot = reliability_analysis(dat_ot, 'n2fast');
+a_thickAvg_tt = reliability_analysis(dat_tt, 'n2fast');
+
+[icca_thickAvg_ot, lb, ub] = ICC(dat_ot', 'A-1');
+[iccc_thickAvg_ot, lb, ub] = ICC(dat_ot', 'C-1');
+
+[icca_thickAvg_tt, lb, ub] = ICC(dat_tt', 'A-1');
+[iccc_thickAvg_tt, lb, ub] = ICC(dat_tt', 'C-1');
+
+
+%% Mean curvarture
+dat_ot = [fs_dat_org.MeanCurv'; fs_dat_tmp.MeanCurv'];
+dat_tt = [fs_dat_col.MeanCurv'; fs_dat_tmp.MeanCurv'];
+
+a_meanCurv_ot = reliability_analysis(dat_ot, 'n2fast');
+a_meanCurv_tt = reliability_analysis(dat_tt, 'n2fast');
+
+[icca_meanCurv_ot, lb, ub] = ICC(dat_ot', 'A-1');
+[iccc_meanCurv_ot, lb, ub] = ICC(dat_ot', 'C-1');
+
+[icca_meanCurv_tt, lb, ub] = ICC(dat_tt', 'A-1');
+[iccc_meanCurv_tt, lb, ub] = ICC(dat_tt', 'C-1');
+
+
+
+%END
