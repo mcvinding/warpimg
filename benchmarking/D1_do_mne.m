@@ -1,16 +1,25 @@
-%% Comparison of MNE models
-% Creating source spaces was done with the ft_postfreesurferscript (in
+%% MNE source reconstruction
+%
+% <<REF>>
+%
+% Create source spaces was done with the ft_postfreesurferscript (in
 % fieldtrip/bin) using the function in the HCPpipelines tools. For more
 % information see the documentation for ft_postfreesurferscript.
+%
+% Do MNE source reconstruction on evoked response. Plot results.
+
+close all; clear all
 addpath '~/fieldtrip/fieldtrip/'
 ft_defaults
 addpath '~/fieldtrip/fieldtrip/external/mne'
 
-%% Compute paths
+%% Paths
 data_path = '/home/mikkel/mri_warpimg/data/0177';
 fs_subject_dir = '/home/mikkel/mri_warpimg/fs_subjects_dir';
 raw_folder = '/home/share/workshop_source_reconstruction/20180206/MEG/NatMEG_0177/170424';
+out_folder = '/home/mikkel/mri_warpimg/figures';
 
+% Output filenames
 mneOrg_outFname = fullfile(data_path, 'mnesource_org.mat');
 mneTmp_outFname = fullfile(data_path, 'mnesource_tmp.mat');
 
@@ -21,7 +30,8 @@ load(fullfile(data_path, 'epo.mat'));
 disp('done')
 
 %% Get source space
-% It is important that you use T1.mgz instead of orig.mgz as T1.mgz is normalized to [255,255,255] dimension
+% It is important that you use T1.mgz instead of orig.mgz as T1.mgz is 
+% normalized to [255,255,255] dimension
 mridata_org     = fullfile(fs_subject_dir, '0177/mri/T1.mgz');
 mridata_tmp     = fullfile(fs_subject_dir, '0177warp/mri/T1.mgz');
 
@@ -245,17 +255,23 @@ save(mneOrg_outFname, 'mnesource_org', '-v7.3');
 save(mneTmp_outFname, 'mnesource_tmp', '-v7.3');
 disp('DONE')
 
-%% Plot
-times = [0.050 0.100 0.150 0.200 0.250];
+%% (re)load
+% disp('Loading...');
+% load(mneOrg_outFname);
+% load(mneTmp_outFname);
+% disp('DONE')
+
+%% Plot topographies
+times = [0.000 0.072 0.162 0.237 0.307 0.480];
 
 lw = min([mnesource_org.avg.pow(:); mnesource_tmp.avg.pow(:)]);
 up = max([mnesource_org.avg.pow(:); mnesource_tmp.avg.pow(:)]);
-up = up - 0.50*up;
+up = up - 0.80*up;
 
-logdiff = mnesource_org;
-logdiff.avg.pow = log(mnesource_tmp.avg.pow)-log(mnesource_org.avg.pow);
+mnediff = mnesource_org;
+mnediff.avg.pow = mnesource_tmp.avg.pow-mnesource_org.avg.pow;
 
-cd('/home/mikkel/mri_warpimg/figures')
+cd(out_folder)
 for tt = 1:length(times)
     cfg = [];
     cfg.method          = 'surface';
@@ -266,27 +282,44 @@ for tt = 1:length(times)
     cfg.funcolorlim     = [lw, up];
     
     ft_sourceplot(cfg, mnesource_org); 
-    title(['Original MRI (',num2str(times(tt)*1000),' ms)']);
+    title(['Original MRI (',num2str(times(tt)*1000),' ms)'], 'fontsize', 20);
     view([0 0 1])
     
     fname = ['mne_org',num2str(times(tt)*1000),'.png'];
     print(fname, '-dpng'); close
     
     ft_sourceplot(cfg, mnesource_tmp); 
-    title(['Warped template MRI (',num2str(times(tt)*1000),' ms)'])
+    title(['Warped template MRI (',num2str(times(tt)*1000),' ms)'], 'fontsize', 20)
     view([0 0 1])
 
     fname = ['mne_tmp',num2str(times(tt)*1000),'.png'];
     print(fname, '-dpng'); close
     
     cfg.funcolormap     = 'RdBu';    % Change for better color options
-    cfg.funcolorlim     = [min(logdiff.avg.pow(:)), max(logdiff.avg.pow(:))];
-    ft_sourceplot(cfg, logdiff); 
-    title(['Log-ratio (',num2str(times(tt)*1000),' ms)'])
+    cfg.funcolorlim     = [min(mnediff.avg.pow(:))/2, max(mnediff.avg.pow(:)/2)];
+    ft_sourceplot(cfg, mnediff); 
+    title(['Difference (',num2str(times(tt)*1000),' ms)'], 'fontsize', 20)
     view([0 0 1])
     
     fname = ['mne_dif',num2str(times(tt)*1000),'.png'];
     print(fname, '-dpng'); close
 end
+
+%% Plot global mean power
+tim = mnesource_org.time;
+gmp_org = mean(mnesource_org.avg.pow);
+gmp_tmp = mean(mnesource_tmp.avg.pow);
+
+figure; set(gcf,'Position',[0 0 1000 400]); hold on
+plot(tim, gmp_org, 'b', 'linewidth', 2)
+plot(tim, gmp_tmp, 'r', 'linewidth', 2)
+xlim([min(tim), max(tim)])
+title('Global mean power')
+xlabel('Time (s)');
+for ll = 1:length(times)
+    line([times(ll), times(ll)], get(gca, 'ylim'), 'color', 'k', 'linestyle', '--')
+end
+
+print(fullfile(out_path, 'mne_globalpow.png'), '-dpng')
 
 %END

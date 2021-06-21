@@ -1,11 +1,18 @@
-% LCMV virtual channels
-clear all; close all
+%% LCMV virtual channels
+%
+% <<REF>>
+%
+% Calculate virtual channels in a set of predefined labels. Estimate
+% LCMV beamformer filters from evoked and apply to single trial epochs.
+
+clear all; close all;
 addpath '~/fieldtrip/fieldtrip/'
 ft_defaults
 
 %% Data paths
 data_path = '/home/mikkel/mri_warpimg/data/0177';
 ft_path   = '~/fieldtrip/fieldtrip/';
+out_folder = '/home/mikkel/mri_warpimg/figures';
 
 %% Load data
 fprintf('Loading data... ')
@@ -65,8 +72,7 @@ cfg.sourcemodel     = sourcemodel_tmp;
 cfg.headmodel       = headmodel_tmp;
 leadfield_tmp = ft_prepare_leadfield(cfg);
 
-%% Make filter
-% Calculate Kappa
+%% Calculate Kappa
 cfg = [];
 cfg.covariance          = 'yes';
 cfg.covariancewindow    = 'all';
@@ -82,7 +88,7 @@ fprintf('Kappa = %i\n', kappa)
 figure;
 semilogy(diag(s),'o-');
 
-%% Do initial source analysis
+%% Do initial source analysis to calculte filters
 cfg = [];
 cfg.method              = 'lcmv';
 cfg.channel             = 'meg';
@@ -113,7 +119,7 @@ find(~cellfun(@isempty, strfind(atlas_grid.tissuelabel, 'Postcentral')))
 find(~cellfun(@isempty, strfind(atlas_grid.tissuelabel, 'Thalamus')))
 find(~cellfun(@isempty, strfind(atlas_grid.tissuelabel, 'Cerebellum_4_5')))
 
-labs = [1, 2, 13, 14, 57, 58, 77, 78, 97, 98];
+labs = [1, 2, 13, 14, 57, 58, 77, 78, 97, 98]; % Manually found labels
 atlas_grid.tissuelabel(labs)
 
 %% Plot for inspection
@@ -150,63 +156,80 @@ save(fullfile(data_path, 'vrtavg_org.mat'), 'vrtavg_org')
 save(fullfile(data_path, 'vrtavg_tmp.mat'), 'vrtavg_tmp')
 disp('done')
 
+%% (re)load
+fprintf('Loading... ')
+load(fullfile(data_path, 'vrtavg_org.mat'))
+load(fullfile(data_path, 'vrtavg_tmp.mat'))
+disp('done')
+
 %% Plot
+close all
+
 xx = [min(vrtavg_org.time),max(vrtavg_org.time)];
 yy = [-8e-10 8e-10];
 
-figure;
+figure; set(gcf,'Position',[0 0 800 1000]); hold on
+
 subplot(5,2,1); 
 plot(vrtavg_org.time, vrtavg_org.avg(1,:), 'b'); hold on
 plot(vrtavg_tmp.time, vrtavg_tmp.avg(1,:), 'r')
-title(vrtavg_org.label(1)); xlim(xx); ylim(yy)
+title(vrtavg_org.label(1), 'Interpreter','none'); 
+xlim(xx); ylim(yy)
 
 subplot(5,2,2); 
 plot(vrtavg_org.time, vrtavg_org.avg(2,:), 'b'); hold on
 plot(vrtavg_tmp.time, vrtavg_tmp.avg(2,:), 'r')
-title(vrtavg_org.label(2)); xlim(xx); ylim(yy)
+title(vrtavg_org.label(2), 'Interpreter','none');
+xlim(xx); ylim(yy)
 
 subplot(5,2,3)
-plot(vrtavg_org.time, vrtavg_org.avg(3,:), 'b'); hold on
-plot(vrtavg_tmp.time, vrtavg_tmp.avg(3,:), 'r')
-title(vrtavg_org.label(3)); xlim(xx); ylim(yy)
-
-subplot(5,2,4)
-plot(vrtavg_org.time, vrtavg_org.avg(4,:), 'b'); hold on
-plot(vrtavg_tmp.time, vrtavg_tmp.avg(4,:), 'r')
-title(vrtavg_org.label(4)); xlim(xx); ylim(yy)
-
-subplot(5,2,5)
 plot(vrtavg_org.time, vrtavg_org.avg(5,:), 'b'); hold on
 plot(vrtavg_tmp.time, vrtavg_tmp.avg(5,:), 'r')
-title(vrtavg_org.label(5)); xlim(xx); ylim(yy)
+title(vrtavg_org.label(5), 'Interpreter','none');
+xlim(xx); ylim(yy)
 
-subplot(5,2,6)
+subplot(5,2,4)
 plot(vrtavg_org.time, vrtavg_org.avg(6,:), 'b'); hold on
 plot(vrtavg_tmp.time, vrtavg_tmp.avg(6,:), 'r')
-title(vrtavg_org.label(6)); xlim(xx); ylim(yy)
+title(vrtavg_org.label(6), 'Interpreter','none');
+xlim(xx); ylim(yy)
+
+subplot(5,2,5)
+plot(vrtavg_org.time, vrtavg_org.avg(3,:), 'b'); hold on
+plot(vrtavg_tmp.time, vrtavg_tmp.avg(3,:), 'r')
+title(vrtavg_org.label(3), 'Interpreter','none');
+xlim(xx); ylim(yy)
+
+subplot(5,2,6)
+plot(vrtavg_org.time, vrtavg_org.avg(4,:), 'b'); hold on
+plot(vrtavg_tmp.time, vrtavg_tmp.avg(4,:), 'r')
+title(vrtavg_org.label(4), 'Interpreter','none');
+xlim(xx); ylim(yy)
 
 subplot(5,2,7)
 plot(vrtavg_org.time, vrtavg_org.avg(7,:), 'b'); hold on
 plot(vrtavg_tmp.time, vrtavg_tmp.avg(7,:), 'r')
-title(vrtavg_org.label(7)); xlim(xx); ylim(yy)
+title(vrtavg_org.label(7), 'Interpreter','none');
+xlim(xx); ylim(yy)
 
 subplot(5,2,8)
 plot(vrtavg_org.time, vrtavg_org.avg(8,:), 'b'); hold on
 plot(vrtavg_tmp.time, vrtavg_tmp.avg(8,:), 'r')
-title(vrtavg_org.label(8)); xlim(xx); ylim(yy)
+title(vrtavg_org.label(8), 'Interpreter','none');
+xlim(xx); ylim(yy)
 
 subplot(5,2,9)
 plot(vrtavg_org.time, vrtavg_org.avg(9,:), 'b'); hold on
 plot(vrtavg_tmp.time, vrtavg_tmp.avg(9,:), 'r')
-title(vrtavg_org.label(9)); xlim(xx); ylim(yy)
+title(vrtavg_org.label(9), 'Interpreter','none');
+xlim(xx); ylim(yy)
 
 subplot(5,2,10)
 plot(vrtavg_org.time, vrtavg_org.avg(10,:), 'b'); hold on
 plot(vrtavg_tmp.time, vrtavg_tmp.avg(10,:), 'r')
-title(vrtavg_org.label(10)); xlim(xx); ylim(yy)
+title(vrtavg_org.label(10), 'Interpreter','none');
+xlim(xx); ylim(yy)
 
-
-% corr(vrtavg_org.avg(1,:)', vrtavg_tmp.avg(1,:)')
-% corr(vrtavg_org.avg(2,:)', vrtavg_tmp.avg(2,:)')
+print(fullfile(out_path, 'vrtchanplot.png'), '-dpng')
 
 %END

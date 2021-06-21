@@ -1,4 +1,4 @@
-% Reliability analysis of source reconstructed data using Krippendorff's
+%% Reliability analysis of source reconstructed data using Krippendorff's
 % alpha.
 addpath('/home/mikkel/reliability_analysis/') %https://github.com/mcvinding/reliability_analysis
 

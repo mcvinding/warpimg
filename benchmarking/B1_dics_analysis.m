@@ -1,4 +1,12 @@
-%% DICS
+%% DICS source reconstruction of beta desync.
+% 
+% <<REF>>
+%
+% Do DICS source reconstruction of beta desynchronization. Calucalte CSD in
+% betadeysnchronization and similar length baseline period. Calculate
+% beamformer filter for both periods and apply filters to data. Calcualte
+% activation power between desync and baseline periodes.
+
 close all; clear all
 addpath '~/fieldtrip/fieldtrip/'
 ft_defaults

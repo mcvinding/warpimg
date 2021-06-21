@@ -1,5 +1,12 @@
 %% Prepare MEG data for source analysis. 
-% Read preprocessed tutorial data and get epochs and evoked responses
+%
+% <<REF>>
+%
+% Read preprocessed tutorial data and get epochs and evoked responses. Save
+% the data for the epochs, the epochs cut to time of interest, and the
+% evoked (averged) responses that are used in the MEG source analysis. Plot
+% the ERF as an example (Figure 1).
+
 addpath('~/fieldtrip/fieldtrip')
 ft_defaults
 
@@ -38,11 +45,10 @@ cfg.covariance          = 'yes';
 cfg.covariancewindow    = 'prestim';
 evoked = ft_timelockanalysis(cfg, epo);
 
-%% Plot topographies
-
-cfg = [];
-cfg.layout = 'neuromag306mag.lay';
-ft_multiplotER(cfg, evoked);
+%% Plot topographies (for inspection)
+% cfg = [];
+% cfg.layout = 'neuromag306mag.lay';
+% ft_multiplotER(cfg, evoked);
 
 % cfg = [];
 % cfg.viewmode = 'butterfly';
@@ -54,6 +60,14 @@ fprintf('Saving...')
 save(fullfile(data_path, 'data.mat'), 'data');
 save(fullfile(data_path, 'epo.mat'), 'epo');
 save(fullfile(data_path, 'evoked.mat'), 'evoked');
+disp('done')
+
+%% (re)load
+
+fprintf('Loading data...')
+load(fullfile(data_path, 'data.mat'));
+load(fullfile(data_path, 'epo.mat'));
+load(fullfile(data_path, 'evoked.mat'));
 disp('done')
 
 %% TFR (for inspection)
@@ -77,5 +91,63 @@ cfg.baselinetype    = 'relative';  % Type of baseline, see help ft_multiplotTFR
 cfg.baseline        = [-inf 0];    % Time of baseline
 
 figure; ft_multiplotTFR(cfg, tfr);
+
+%% Plot ERF
+out_path = '/home/mikkel/mri_warpimg/figures';
+
+% ERF multiplot
+figure; set(gcf,'Position',[0 0 700 600])
+cfg = [];
+cfg.layout          = 'neuromag306mag';
+cfg.showlabels      = 'no';
+cfg.showcomment     = 'no';
+cfg.showscale       = 'no';
+cfg.linecolor       = 'k';
+ft_multiplotER(cfg, evoked);
+print(fullfile(out_path, 'erf_multiplot.png'), '-dpng')
+
+% ERF singleplot
+figure; set(gcf,'Position',[0 0 600 200])
+cfg = [];
+cfg.channel         = 'MEG0221';
+cfg.title           = '';
+cfg.linecolor       = 'k';
+cfg.linewidth       = 2;
+ft_singleplotER(cfg, evoked)
+print(fullfile(out_path, 'erf_singleplot.png'), '-dpng')
+
+% Example topographies
+figure; set(gcf,'Position',[0 0 500 500])
+cfg = [];
+cfg.title           = '';
+cfg.xlim            = [0.05 0.06];
+cfg.layout          = 'neuromag306mag';
+cfg.comment         = 'no';
+cfg.marker          = 'off';
+ft_topoplotER(cfg, evoked)
+print(fullfile(out_path, 'erf_topoSI.png'), '-dpng')
+
+figure; set(gcf,'Position',[0 0 500 500])
+cfg = [];
+cfg.title           = '';
+cfg.xlim            = [0.13 0.18];
+cfg.layout          = 'neuromag306mag';
+cfg.comment         = 'no';
+cfg.marker          = 'off';
+ft_topoplotER(cfg, evoked)
+print(fullfile(out_path, 'erf_topoSII.png'), '-dpng')
+
+figure; set(gcf,'Position',[0 0 500 500])
+cfg = [];
+cfg.title           = '';
+cfg.xlim            = [0.27 0.38];
+cfg.layout          = 'neuromag306mag';
+cfg.comment         = 'no';
+cfg.marker          = 'off';
+ft_topoplotER(cfg, evoked)
+
+print(fullfile(out_path, 'erf_topoLate.png'), '-dpng')
+
+close all
 
 %END
