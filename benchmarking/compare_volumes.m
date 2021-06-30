@@ -7,8 +7,10 @@
 % headmodels superimposed (Figure 3).
 % Analyse the similarity in atlas label location in volume.
 
-addpath '~/fieldtrip/fieldtrip/'
+addpath('~/fieldtrip/fieldtrip/')
 ft_defaults
+addpath('~/reliability_analysis/') % https://github.com/mcvinding/reliability_analysis
+
 
 %% Paths
 subjs = {'0177'};

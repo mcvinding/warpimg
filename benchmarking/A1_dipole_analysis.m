@@ -1,6 +1,14 @@
 %% Dipole source analysis
+% 
+% <<REF>>
+%
+% Do dipole fits to evoked componet. Single dipole fits to magnetometers and
+% gradiomenters for SI. Dual dipole fits to magnetometers and gradiomenters 
+% for SII components. Single dipole fits for 0-500 ms at location of single
+% dipole fit for magnetometers and gradiomenters.
+
 clear all; close all;
-addpath '~/fieldtrip/fieldtrip/'
+addpath('~/fieldtrip/fieldtrip/')
 ft_defaults
 
 %% File paths
@@ -22,8 +30,8 @@ ft_multiplotER(cfg, evoked);
 % figure; ft_databrowser(cfg, data)
 
 %% Settings
-early_latency   = [0.050 0.060]; % s
-late_latency    = [0.115 0.155]; % s
+early_latency   = [0.050 0.060]; % ~SI
+late_latency    = [0.115 0.155]; % ~SII
 
 %% Do dipole fit: magnetometer fits
 cfg = [];

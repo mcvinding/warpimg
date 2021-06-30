@@ -13,7 +13,7 @@ mri_colin = mri;            % Rename to avoid confusion
 load(fullfile(data_path, 'mri_tmp_resliced.mat'));
 load(fullfile(data_path, 'mri_org_resliced.mat'));
 
-mri_org_resliced.anatomy(mri_org_resliced.anatomy>5000) = 5000;
+mri_neuromag_resliced.anatomy(mri_neuromag_resliced.anatomy>5000) = 5000;
 
 %% Plot
 cfg = [];

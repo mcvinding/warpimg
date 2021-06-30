@@ -24,8 +24,14 @@ cfg.channel = 'meg';
 cfg.trials  = cleaned_downsampled_data.trialinfo==8;
 data = ft_selectdata(cfg, cleaned_downsampled_data);
 
-% Remove elec field change unit
+% Remove elec field and change unit
 data = rmfield(data, 'elec');
+
+%% Fix sensor info
+newgrad = ft_read_sens('/home/share/workshop_source_reconstruction/20180206/MEG/NatMEG_0177/170424'
+
+
+
 data.grad = ft_convert_units(data.grad, 'mm');
 
 %% Prepare epochs and evoked

@@ -1,6 +1,18 @@
 %% Reliability analysis of source reconstructed data using Krippendorff's
 % alpha.
-addpath('/home/mikkel/reliability_analysis/') %https://github.com/mcvinding/reliability_analysis
+% 
+% <<REF>>
+%
+% Compare the results of MEG source reconstructions from 1) dipole fits, 2)
+% DICS beamformer, 3) LCMV beamformer virtual channels, and D) minimum-norm
+% estimates. Compare similarity using Krippendorff Alpha
+% (https://github.com/mcvinding/reliability_analysis), as reported in the
+% article. Additional reliability analysis using interclass correlation
+% coefficent (ICC).
+
+% ICC script: Arash Salarian (2021). Intraclass Correlation Coefficient (ICC) (https://www.mathworks.com/matlabcentral/fileexchange/22099-intraclass-correlation-coefficient-icc), MATLAB Central File Exchange. Retrieved June 8, 2021.
+
+addpath('/home/mikkel/reliability_analysis/') % https://github.com/mcvinding/reliability_analysis
 
 %% Paths
 data_path = '/home/mikkel/mri_warpimg/data/0177';

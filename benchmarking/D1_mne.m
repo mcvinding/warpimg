@@ -256,10 +256,10 @@ save(mneTmp_outFname, 'mnesource_tmp', '-v7.3');
 disp('DONE')
 
 %% (re)load
-% disp('Loading...');
-% load(mneOrg_outFname);
-% load(mneTmp_outFname);
-% disp('DONE')
+disp('Loading...');
+load(mneOrg_outFname);
+load(mneTmp_outFname);
+disp('DONE')
 
 %% Plot topographies
 times = [0.000 0.072 0.162 0.237 0.307 0.480];
@@ -320,6 +320,6 @@ for ll = 1:length(times)
     line([times(ll), times(ll)], get(gca, 'ylim'), 'color', 'k', 'linestyle', '--')
 end
 
-print(fullfile(out_path, 'mne_globalpow.png'), '-dpng')
+print(fullfile(out_folder, 'mne_globalpow.png'), '-dpng')
 
 %END

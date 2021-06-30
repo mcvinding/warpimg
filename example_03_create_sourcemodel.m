@@ -1,4 +1,11 @@
-%% Make source models
+%% Make grid source models
+% 
+% <<REF>>
+%
+% Create standard grid source models for volumetric headmodel for orignal
+% MRI and warped template. Import standard MNI grid source space and warp
+% to orignal MRI and warped template.
+
 addpath '~/fieldtrip/fieldtrip/'
 addpath '~/fieldtrip/fieldtrip/external/mne'
 ft_defaults
@@ -23,6 +30,7 @@ load(fullfile(data_path, 'mri_org_resliced.mat'));
 disp('done')
 
 %% Make MNI grid sourcemodels
+% Take the grid in MNI standard space and warp it to the MRIs.
 cfg = [];
 cfg.method          = 'basedonmni';
 cfg.nonlinear       = 'yes';
@@ -41,19 +49,6 @@ cfg.mri             = mri_tmp_resliced;
 cfg.headmodel       = headmodel_tmp;
 sourcemodel_tmp = ft_prepare_sourcemodel(cfg);
 
-%%
-% cfg = [];
-% cfg.interpmethod = 'nearest';
-% cfg.parameter    = 'tissue';
-% mri_tst = ft_sourceinterpolate(cfg, sourcemodel_tmp, mri_tmp_resliced);
-% % mri_tst.tissue(~(mri_tst.tissue==1 | mri_tst.tissue==2)) = 0;
-% 
-% cfg = [];
-% cfg.funparameter = 'tissue';
-% cfg.anaparameter = 'anatomy';
-% cfg.funcolormap  = 'jet';
-% ft_sourceplot(cfg, mri_tst)
-
 %% Save
 save(fullfile(data_path, 'sourcemodels_mni.mat'), 'sourcemodel_org', 'sourcemodel_tmp')
 
@@ -69,6 +64,7 @@ ft_plot_headmodel(headmodel_org, 'facealpha',0.25)
 view([1 0 0])
 
 %% Make standard grid sourcemodels
+% Without any normalization. All coordinates are in MRI native space.
 cfg = [];
 cfg.method          = 'basedonresolution';
 cfg.unit            = 'mm';
