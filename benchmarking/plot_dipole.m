@@ -32,58 +32,36 @@ disp('done')
 % Rescale MRI intensity for plotting
 mri_org_resliced.anatomy(mri_org_resliced.anatomy>5000) = 5000;
 
+%% Convert dip units for plotting
+dip_mag_early_org.dip = ft_convert_units(dip_mag_early_org.dip, 'mm');
+dip_mag_early_tmp.dip = ft_convert_units(dip_mag_early_tmp.dip, 'mm');
+
+dip_mag_late_org.dip = ft_convert_units(dip_mag_late_org.dip, 'mm');
+dip_mag_late_tmp.dip = ft_convert_units(dip_mag_late_tmp.dip, 'mm');
+
+dip_grad_early_org.dip = ft_convert_units(dip_grad_early_org.dip, 'mm');
+dip_grad_early_tmp.dip = ft_convert_units(dip_grad_early_tmp.dip, 'mm');
+
+dip_grad_late_org.dip = ft_convert_units(dip_grad_late_org.dip, 'mm');
+dip_grad_late_tmp.dip = ft_convert_units(dip_grad_late_tmp.dip, 'mm');
+
+dip_grad_all_org.dip = ft_convert_units(dip_grad_all_org.dip, 'mm');
+dip_grad_all_tmp.dip = ft_convert_units(dip_grad_all_tmp.dip, 'mm');
+
 %% Inspect
-figure; hold on
-ft_determine_coordsys(mri_org_resliced, 'interactive', 'no'); hold on;
-ft_plot_sens(evoked.grad);
-ft_plot_headmodel(headmodel_org, 'facealpha', 0.5, 'facecolor', 'r')
-ft_plot_dipole(dip_grad_early_org.dip.pos, mean(dip_grad_early_org.dip.mom,2), 'size',2, 'unit', 'mm'); hold on
+% figure; hold on
+% ft_determine_coordsys(mri_org_resliced, 'interactive', 'no'); hold on;
+% ft_plot_sens(evoked.grad, 'color', 'r');
+% ft_plot_headmodel(headmodel_org, 'facealpha', 0.5, 'facecolor', 'r')
+% ft_plot_dipole(dip_grad_early_org.dip.pos, mean(dip_grad_early_org.dip.mom,2), 'size',2, 'unit', 'mm'); hold on
 
 %% Compare dip: mags early component
 % Distance error
 norm(dip_mag_early_org.dip.pos-dip_mag_early_tmp.dip.pos)
 
-figure; hold on
-plot(dip_mag_early_org.time, dip_mag_early_org.dip.rv)
-plot(dip_mag_early_tmp.time, dip_mag_early_tmp.dip.rv)
-
-%%
-figure; hold on
-pos = dip_mag_early_tmp.dip.pos;
-ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_org_resliced.transform,'location', pos, 'orientation', [1 0 0]); hold on
-ft_plot_slice(mri_org_resliced.anatomy, 'transform', mri_org_resliced.transform,'location', pos, 'orientation', [0 1 0]); hold on
-ft_plot_slice(mri_org_resliced.anatomy, 'transform', mri_org_resliced.transform,'location', pos, 'orientation', [0 0 1]); hold on
-ft_plot_dipole(dip_mag_early_org.dip.pos, mean(dip_mag_early_org.dip.mom,2), 'size',2, 'unit', 'mm','color','b'); hold on
-ft_plot_dipole(dip_mag_early_tmp.dip.pos, mean(dip_mag_early_tmp.dip.mom,2), 'size',2, 'unit', 'mm'); hold on
-view([1 0 0])
-
 %% Compare dip: mags late component
 norm(dip_mag_late_org.dip.pos(1,:)-dip_mag_late_tmp.dip.pos(1,:))
 norm(dip_mag_late_org.dip.pos(2,:)-dip_mag_late_tmp.dip.pos(2,:))
-
-figure; hold on
-plot(dip_mag_late_org.time,dip_mag_late_org.dip.rv)
-plot(dip_mag_late_tmp.time,dip_mag_late_tmp.dip.rv)
-
-figure; hold on
-pos = mean(dip_mag_late_tmp.dip.pos(1,:),1);
-% ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_tmp_resliced.transform,'location', pos,'orientation', [1 0 0]); hold on
-ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_tmp_resliced.transform,'location', pos,'orientation', [0 1 0]); hold on
-% ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_tmp_resliced.transform,'location', pos,'orientation', [0 0 1]); hold on
-ft_plot_dipole(dip_mag_late_tmp.dip.pos(1,:), mean(dip_mag_late_tmp.dip.mom(1:3,:),2), 'size',2, 'unit', 'mm'); hold on
-ft_plot_dipole(dip_mag_late_tmp.dip.pos(2,:), mean(dip_mag_late_tmp.dip.mom(4:6,:),2), 'size',2, 'unit', 'mm'); hold on
-ft_plot_dipole(dip_mag_late_org.dip.pos(1,:), mean(dip_mag_late_org.dip.mom(1:3,:),2), 'size',2, 'unit', 'mm','color','b'); hold on
-ft_plot_dipole(dip_mag_late_org.dip.pos(2,:), mean(dip_mag_late_org.dip.mom(4:6,:),2), 'size',2, 'unit', 'mm','color','b'); hold on
-
-cfg = [];
-cfg.location = dip_mag_late_org.dip.pos(1,:);
-ft_sourceplot(cfg, mri_org_resliced);
-ft_plot_dipole(dip_mag_late_org.dip.pos(1,:), mean(dip_mag_late_org.dip.mom(1:3,:),2), 'size',2, 'unit', 'mm','color','b'); hold on
-
-cfg = [];
-cfg.location = dip_mag_late_tmp.dip.pos(2,:);
-ft_sourceplot(cfg, mri_tmp_resliced);
-ft_plot_dipole(dip_mag_late_tmp.dip.pos(2,:), mean(dip_mag_late_tmp.dip.mom(4:6,:),2), 'size',2, 'unit', 'mm'); hold on
 
 %% Compare dip: grads early component
 norm(dip_grad_early_org.dip.pos-dip_grad_early_tmp.dip.pos)
@@ -117,7 +95,7 @@ ft_plot_dipole(dip_mag_early_tmp.dip.pos, mean(dip_mag_early_tmp.dip.mom,2), 'si
 view([0 -1 0])
 
 % Export
-print(fullfile(out_path, 'dip1_slice_magsd.png'), '-dpng')
+print(fullfile(out_path, 'dip1_slice_mags.png'), '-dpng')
 
 close all
 

@@ -19,6 +19,10 @@ load(fullfile(data_path, 'headmodel_tmp.mat'));
 load(fullfile(data_path, 'headmodel_org.mat'));
 load(fullfile(data_path, 'evoked.mat'));
 
+% Convert to SI units
+headmodel_org = ft_convert_units(headmodel_org, 'm');
+headmodel_tmp = ft_convert_units(headmodel_tmp, 'm');
+
 %% Plot evoked sensor data
 cfg = [];
 cfg.layout = 'neuromag306mag.lay';
@@ -30,10 +34,14 @@ ft_multiplotER(cfg, evoked);
 % figure; ft_databrowser(cfg, data)
 
 %% Settings
-early_latency   = [0.050 0.060]; % ~SI
-late_latency    = [0.115 0.155]; % ~SII
+early_latency   = [0.055 0.065]; % ~SI
+late_latency    = [0.120 0.160]; % ~SII
 
 %% Do dipole fit: magnetometer fits
+% cfg = []
+% cfg.channel = 'megmag'
+% tst = ft_selectdata(cfg, evoked)
+
 cfg = [];
 cfg.gridsearch          = 'yes';
 cfg.dipfit.metric       = 'rv';
@@ -75,8 +83,7 @@ cfg = [];
 cfg.gridsearch      = 'yes';            % search the grid for an optimal starting point
 cfg.dipfit.metric   = 'rv';             % the metric to minimize (the relative residual variance: proportion of variance left unexplained by the dipole model)
 cfg.model           = 'regional';       % assume that the dipole has a fixed position during the time points in the latency range
-% cfg.senstype        = 'MEG';            % sensor type
-cfg.channel         = 'meggrad';        % which channels to use
+cfg.channel         = 'megplanar';        % which channels to use
 cfg.nonlinear       = 'yes';            % do a non-linear search
 
 % FIRST COMPONENT
@@ -116,6 +123,32 @@ save(fullfile(data_path, 'dip_grad_late.mat'),  'dip_grad_late*')
 disp('done')
 
 %% Whole window
+% MAGS
+cfg = [];
+cfg.gridsearch      = 'no';
+cfg.dipfit.metric   = 'rv';
+cfg.model           = 'regional';
+cfg.senstype        = 'MEG';
+cfg.channel         = 'megmag';
+cfg.nonlinear       = 'no';
+cfg.latency         = [0.000; 0.500];
+
+% Original
+cfg.headmodel       = headmodel_org;
+cfg.dip.pos         = dip_mag_early_org.dip.pos;
+dip_mag_all_org = ft_dipolefitting(cfg, evoked);
+
+% Template
+cfg.headmodel       = headmodel_tmp;
+cfg.dip.pos         = dip_mag_early_tmp.dip.pos;
+dip_mag_all_tmp = ft_dipolefitting(cfg, evoked);
+
+% Inspect
+figure; hold on
+plot(dip_mag_all_org.time, sqrt(mean(dip_mag_all_org.dip.mom.^2)))
+plot(dip_mag_all_tmp.time, sqrt(mean(dip_mag_all_tmp.dip.mom.^2)))
+title('Dipoles magnetometers')
+
 % GRADS
 cfg = [];
 cfg.gridsearch     = 'no';
@@ -142,31 +175,6 @@ plot(dip_grad_all_org.time, sqrt(mean(dip_grad_all_org.dip.mom.^2)))
 plot(dip_grad_all_tmp.time, sqrt(mean(dip_grad_all_tmp.dip.mom.^2)))
 title('Dipoles gradiometers')
 
-% MAGS
-cfg = [];
-cfg.gridsearch      = 'no';
-cfg.dipfit.metric   = 'rv';
-cfg.model           = 'regional';
-cfg.senstype        = 'MEG';
-cfg.channel         = 'megmag';
-cfg.nonlinear       = 'no';
-cfg.latency         = [0.000; 0.500];
-
-% Original
-cfg.headmodel       = headmodel_org;
-cfg.dip.pos         = dip_mag_early_org.dip.pos;
-dip_mag_all_org = ft_dipolefitting(cfg, evoked);
-
-% Template
-cfg.headmodel       = headmodel_tmp;
-cfg.dip.pos         = dip_mag_early_tmp.dip.pos;
-dip_mag_all_tmp = ft_dipolefitting(cfg, evoked);
-
-% Inspect
-figure; hold on
-plot(dip_mag_all_org.time, sqrt(mean(dip_mag_all_org.dip.mom.^2)))
-plot(dip_mag_all_tmp.time, sqrt(mean(dip_mag_all_tmp.dip.mom.^2)))
-title('Dipoles magnetometers')
 
 %% SAVE
 fprintf('Saving... ')

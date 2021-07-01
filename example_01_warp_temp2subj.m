@@ -20,12 +20,11 @@ end
 addpath(ftpath)
 ft_defaults 
 
-%% Subjects
+%Subjects
 % Make a loop here for multiple subjects
-
 subjs = {'0177'};
 
-%% Paths
+% Paths
 mri_path = fullfile(raw_folder, 'MRI', 'dicoms');                       % Raw data folder
 meg_path = fullfile(raw_folder, 'MEG', ['NatMEG_',subjs{1}], '170424'); % Raw data folder
 sub_path = fullfile(out_folder, subjs{1});                              % Output folder
@@ -76,7 +75,7 @@ headshape = ft_convert_units(headshape, 'mm');
 % Save headshapes and sensor info (optional)
 save(fullfile(data_path, 'headshape'), 'headshape')
 
-%% Aligh MRI to MEG headpoints
+% Aligh MRI to MEG headpoints
 cfg = [];
 cfg.method              = 'headshape';
 cfg.headshape.headshape = headshape;
@@ -186,20 +185,23 @@ cfg = [];
 cfg.filename    = fullfile(fs_subjdir, '0177warp', 'mri','orig', '001');
 cfg.filetype    = 'mgz';
 cfg.parameter   = 'anatomy';
-ft_volumewrite(cfg, mri_warp2acpc);
+cfg.datatype    = 'double';
+ft_volumewrite(cfg, mri_tmp_resliced);
 
 % Original
 cfg = [];
 cfg.filename    = fullfile(fs_subjdir, '0177', 'mri','orig', '001');
 cfg.filetype    = 'mgz';
 cfg.parameter   = 'anatomy';
-ft_volumewrite(cfg, mri_orig);
+cfg.datatype    = 'double';
+ft_volumewrite(cfg, mri_org_resliced);
 
 % Original template
 cfg = [];
 cfg.filename    = fullfile(fs_subjdir, 'colin', 'mri','orig', '001');
 cfg.filetype    = 'mgz';
 cfg.parameter   = 'anatomy';
+cfg.datatype    = 'uint8';
 ft_volumewrite(cfg, mri_colin);
 
 % END

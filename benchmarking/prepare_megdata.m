@@ -28,11 +28,7 @@ data = ft_selectdata(cfg, cleaned_downsampled_data);
 data = rmfield(data, 'elec');
 
 %% Fix sensor info
-newgrad = ft_read_sens('/home/share/workshop_source_reconstruction/20180206/MEG/NatMEG_0177/170424'
-
-
-
-data.grad = ft_convert_units(data.grad, 'mm');
+data.grad = ft_read_sens('/home/share/workshop_source_reconstruction/20180206/MEG/NatMEG_0177/170424/tactile_stim_raw_tsss_mc.fif', 'senstype', 'meg', 'coilaccuracy', 1);
 
 %% Prepare epochs and evoked
 cfg = [];
@@ -69,7 +65,6 @@ save(fullfile(data_path, 'evoked.mat'), 'evoked');
 disp('done')
 
 %% (re)load
-
 fprintf('Loading data...')
 load(fullfile(data_path, 'data.mat'));
 load(fullfile(data_path, 'epo.mat'));

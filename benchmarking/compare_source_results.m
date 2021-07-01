@@ -1,5 +1,4 @@
-%% Reliability analysis of source reconstructed data using Krippendorff's
-% alpha.
+%% Reliability analysis of source reconstructed data
 % 
 % <<REF>>
 %
