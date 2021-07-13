@@ -2,11 +2,13 @@
 %
 % <<REF>>
 %
-% Create source spaces was done with the ft_postfreesurferscript (in
-% fieldtrip/bin) using the function in the HCPpipelines tools. For more
-% information see the documentation for ft_postfreesurferscript.
-%
 % Do MNE source reconstruction on evoked response. Plot results.
+%
+% Creation of source spaces was done with the ft_postfreesurferscript (in
+% fieldtrip/bin) using the function in the HCPpipelines tools. For more
+% information see the documentation for ft_postfreesurferscript. Examples
+% on how to use the ft_postfreesurfer script is found in the file
+% ./run_postfreesurfer.sh. 
 
 close all; clear all
 addpath '~/fieldtrip/fieldtrip/'
@@ -25,7 +27,6 @@ mneTmp_outFname = fullfile(data_path, 'mnesource_tmp.mat');
 
 %% Load data
 fprintf('Loading... ')
-load(fullfile(data_path, 'evoked.mat'));
 load(fullfile(data_path, 'epo.mat'));
 disp('done')
 
@@ -143,7 +144,7 @@ cfg.anaparameter = 'anatomy';
 cfg.funparameter = 'brain';
 ft_sourceplot(cfg, pltvol);
 
-%% STEP 2D: Construct mesh from inner volume and create the headmodel
+%% Construct mesh from inner volume and create the headmodel
 cfg = [];
 cfg.method      = 'projectmesh';
 cfg.tissue      = 'brain';
@@ -174,8 +175,8 @@ ft_plot_headmodel(headmodel_tmp, 'edgecolor','c','facealpha',0.25)
 fprintf('Saving...')
 save(fullfile(data_path, 'headmodel_mne_tmp.mat'), 'headmodel_tmp')
 save(fullfile(data_path, 'headmodel_mne_org.mat'), 'headmodel_org')
-save(srcOrg_outFname, 'surfsrc_org', '-v7.3');
-save(srcTmp_outFname, 'surfsrc_tmp', '-v7.3');
+save(fullfile(data_path, 'surfsrc_org'), 'surfsrc_org', '-v7.3');
+save(fullfile(data_path, 'surfsrc_tmp'), 'surfsrc_tmp', '-v7.3');
 disp('DONE')
 
 %% Whiten data
@@ -223,12 +224,12 @@ cfg.sourcemodel         = surfsrc_tmp;          % source points
 cfg.headmodel           = headmodel_tmp;          % volume conduction model
 lf_tmp = ft_prepare_leadfield(cfg, evoked);
 
-%% Do MNE (with grads)
+%% Do MNE
 cfg                     = [];
 cfg.method              = 'mne';
 cfg.channel             = 'meggrad';
 cfg.senstype            = 'meg';
-cfg.mne.prewhiten       = 'yes';
+cfg.mne.prewhiten       = 'no';
 cfg.mne.lambda          = 3;
 cfg.mne.scalesourcecov  = 'yes';
 cfg.sourcemodel         = lf_org;
@@ -240,7 +241,6 @@ cfg.headmodel           = headmodel_tmp;
 mnesource_tmp  = ft_sourceanalysis(cfg, evoked);
 
 %% Inspect
-
 cfg = [];
 cfg.funparameter = 'pow';
 ft_sourcemovie(cfg, mnesource_org);
@@ -253,13 +253,13 @@ figure; ft_sourcemovie(cfg, mnesource_tmp);
 disp('Saving...');
 save(mneOrg_outFname, 'mnesource_org', '-v7.3');
 save(mneTmp_outFname, 'mnesource_tmp', '-v7.3');
-disp('DONE')
+disp('done')
 
 %% (re)load
 disp('Loading...');
 load(mneOrg_outFname);
 load(mneTmp_outFname);
-disp('DONE')
+disp('done')
 
 %% Plot topographies
 times = [0.000 0.072 0.162 0.237 0.307 0.480];
@@ -316,10 +316,11 @@ plot(tim, gmp_tmp, 'r', 'linewidth', 2)
 xlim([min(tim), max(tim)])
 title('Global mean power')
 xlabel('Time (s)');
+yy = get(gca, 'ylim'); ylim(yy);
 for ll = 1:length(times)
-    line([times(ll), times(ll)], get(gca, 'ylim'), 'color', 'k', 'linestyle', '--')
+    line([times(ll), times(ll)], yy, 'color', 'k', 'linestyle', '--')
 end
 
-print(fullfile(out_folder, 'mne_globalpow.png'), '-dpng')
+% print(fullfile(out_folder, 'mne_globalpow.png'), '-dpng')
 
 %END

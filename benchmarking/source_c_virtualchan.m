@@ -12,11 +12,12 @@ ft_defaults
 %% Data paths
 data_path = '/home/mikkel/mri_warpimg/data/0177';
 ft_path   = '~/fieldtrip/fieldtrip/';
-out_folder = '/home/mikkel/mri_warpimg/figures';
+out_path  = '/home/mikkel/mri_warpimg/figures';
 
 %% Load data
 fprintf('Loading data... ')
 load(fullfile(data_path, 'epo.mat'));
+load(fullfile(data_path, 'evoked.mat'));
 
 % Read atlas
 atlas = ft_read_atlas(fullfile(ft_path, '/template/atlas/aal/ROI_MNI_V4.nii'));
@@ -31,9 +32,15 @@ load(fullfile(data_path, 'headmodel_tmp.mat'));
 load(fullfile(data_path, 'sourcemodels_mni.mat'));
 disp('done')
 
-%% Calculate avg
-cfg = [];
-evoked = ft_timelockanalysis(cfg, epo);
+%% Units
+headmodel_org = ft_convert_units(headmodel_org, 'm');
+headmodel_tmp = ft_convert_units(headmodel_tmp, 'm');
+sourcemodel_org = ft_convert_units(sourcemodel_org, 'm');
+sourcemodel_tmp = ft_convert_units(sourcemodel_tmp, 'm');
+
+% %% Calculate avg
+% cfg = [];
+% evoked = ft_timelockanalysis(cfg, epo);
 
 %% Inspect
 % ft_determine_coordsys(mri_org_resliced, 'interactive', 'no'); hold on;
@@ -43,7 +50,7 @@ evoked = ft_timelockanalysis(cfg, epo);
 
 %% Add atlas info to sources
 load(fullfile(ft_path, 'template/sourcemodel/standard_sourcemodel3d6mm'));
-sourcemodel = ft_convert_units(sourcemodel, 'mm');
+sourcemodel = ft_convert_units(sourcemodel, 'cm');
 
 cfg = [];
 cfg.interpmethod = 'nearest';
@@ -85,8 +92,8 @@ d       = d./std(d);
 kappa   = find(d>5,1,'first');
 fprintf('Kappa = %i\n', kappa)
 
-figure;
-semilogy(diag(s),'o-');
+% figure;
+% semilogy(diag(s),'o-');
 
 %% Do initial source analysis to calculte filters
 cfg = [];
@@ -108,7 +115,7 @@ cfg.headmodel           = headmodel_tmp;
 cfg.sourcemodel         = leadfield_tmp;
 source_tmp = ft_sourceanalysis(cfg, data_cov);
 
-% add atlas
+%% add atlas
 source_org.tissue = atlas_grid.tissue;
 source_org.tissuelabel = atlas_grid.tissuelabel;
 source_tmp.tissue = atlas_grid.tissue;
@@ -135,7 +142,6 @@ mri_tst.tissuelabel = {'ROI'};
 cfg = [];
 cfg.funparameter = 'tissue';
 cfg.anaparameter = 'anatomy';
-% cfg.funcolormap  = 'lines';
 ft_sourceplot(cfg, mri_tst)
 
 %% Make virtual channel
@@ -166,7 +172,7 @@ disp('done')
 close all
 
 xx = [min(vrtavg_org.time),max(vrtavg_org.time)];
-yy = [-8e-10 8e-10];
+yy = [-20e-11 20e-11];
 
 figure; set(gcf,'Position',[0 0 800 1000]); hold on
 
@@ -230,6 +236,6 @@ plot(vrtavg_tmp.time, vrtavg_tmp.avg(10,:), 'r')
 title(vrtavg_org.label(10), 'Interpreter','none');
 xlim(xx); ylim(yy)
 
-print(fullfile(out_path, 'vrtchanplot.png'), '-dpng')
+print(fullfile(out_path, 'vrtchanplot2.png'), '-dpng')
 
 %END

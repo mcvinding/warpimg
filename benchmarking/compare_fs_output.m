@@ -4,7 +4,8 @@
 %
 % Read Freesurfer output stat files and compare the similarity between the
 % original MRI, the warped template, and the unmodified Colin27 template.
-% Incl. plots.
+% Incl. plots. Stats files from Freesurfer has been manually convertet from
+% .stats to .txt.
 
 out_path = '/home/mikkel/mri_warpimg/figures';
 
@@ -57,7 +58,7 @@ fs_dat_col = [dat_lh; dat_rh];
 xtmp = 1:length(fs_dat_org.StructName);
 names = fs_dat_org.StructName;
 
-figure; set(gcf,'Position',[0 0 600 1000])
+figure; set(gcf,'Position',[0 0 800 1000])
 
 subplot(9,1,1:2); hold on
 scatter(xtmp, fs_dat_org.SurfArea, '.b')
@@ -153,7 +154,5 @@ a_meanCurv_tt = reliability_analysis(dat_tt, 'n2fast');
 
 [icca_meanCurv_tt, lba, uba] = ICC(dat_tt', 'A-1');
 [iccc_meanCurv_tt, lbc, ubc] = ICC(dat_tt', 'C-1');
-
-
 
 %END
