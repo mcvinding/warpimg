@@ -27,4 +27,8 @@ The MEG dataset used in the paper to compare source reconstruction methods can b
 
 **Create figures**
 * `plot_dipoles.m`: Plot results from dipole analysis.
+* `plot_dics.m`: Plot results from DICS source reconstruction.
+* `plot_cirtualchan.m`: Plot evoked responses from virtual channels.
+* `plot_mne.m`: Plot MNE source reconstructions.
 * `plot_mris.m` : Various plots of the MRIs.
+* `plot_erf.m` : Plot MEG sensor evoked response and example topographies.

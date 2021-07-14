@@ -64,7 +64,7 @@ ubc = nan(1, length(vrtavg_org.label));
 
 for ii = 1:length(vrtavg_org.label)
     dat = [ vrtavg_org.avg(ii,:); vrtavg_tmp.avg(ii,:)];
-%     a_vrtchans(ii) = reliability_analysis(dat, 'n2fast');
+    a_vrtchans(ii) = reliability_analysis(dat, 'n2fast');
     [icca_vrtchans(ii), lba(ii), uba(ii)] = ICC(dat', 'A-1');
     [iccc_vrtchans(ii), lbc(ii), ubc(ii)] = ICC(dat', 'C-1');
 end
@@ -88,7 +88,7 @@ a_mnex = reliability_analysis(dat, 'alphaprime');
 [icca_mne, lba, uba] = ICC(dat', 'A-1');
 [iccc_mne, lbc, ubc] = ICC(dat', 'C-1');
 
-% Try log transform
+% Log transform
 dat2 = log(dat);
 a_mne2 = reliability_analysis(dat2, 'alphaprime');
 a_mne3 = reliability_analysis(dat2, 'n2fast');

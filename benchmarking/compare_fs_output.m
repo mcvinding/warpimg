@@ -58,7 +58,7 @@ fs_dat_col = [dat_lh; dat_rh];
 xtmp = 1:length(fs_dat_org.StructName);
 names = fs_dat_org.StructName;
 
-figure; set(gcf,'Position',[0 0 800 1000])
+figure; set(gcf,'Position',[0 0 2000 800])
 
 subplot(9,1,1:2); hold on
 scatter(xtmp, fs_dat_org.SurfArea, '.b')
@@ -86,12 +86,12 @@ scatter(xtmp, fs_dat_org.MeanCurv, '.b')
 scatter(xtmp, fs_dat_tmp.MeanCurv, '.r')
 scatter(xtmp, fs_dat_col.MeanCurv, '.k')
 title('Mean Curvature','Interpreter','none');  ylabel('mm^-1')
-% set(gca,'xtick',xtmp,'xticklabel', names)
-set(gca,'xtick',[])
+set(gca,'xtick',xtmp,'xticklabel', [], 'TickLength', [0.005, 0])
+% set(gca,'xtick',[])
 
 % note that the position is relative to your X/Y axis values
 for ii = 1:length(names)
-    t = text(ii, 0.05, names{ii}, 'FontSize', 5, 'Interpreter','none');
+    t = text(ii, 0.05, names{ii}, 'FontSize', 7, 'Interpreter','none');
     set(t,'HorizontalAlignment','right','VerticalAlignment','top','Rotation',45);
 end
 

@@ -19,7 +19,6 @@ addpath '~/fieldtrip/fieldtrip/external/mne'
 data_path = '/home/mikkel/mri_warpimg/data/0177';
 fs_subject_dir = '/home/mikkel/mri_warpimg/fs_subjects_dir';
 raw_folder = '/home/share/workshop_source_reconstruction/20180206/MEG/NatMEG_0177/170424';
-out_folder = '/home/mikkel/mri_warpimg/figures';
 
 % Output filenames
 mneOrg_outFname = fullfile(data_path, 'mnesource_org.mat');
@@ -230,8 +229,9 @@ cfg.method              = 'mne';
 cfg.channel             = 'meggrad';
 cfg.senstype            = 'meg';
 cfg.mne.prewhiten       = 'no';
-cfg.mne.lambda          = 3;
+cfg.mne.lambda          = 2;
 cfg.mne.scalesourcecov  = 'yes';
+
 cfg.sourcemodel         = lf_org;
 cfg.headmodel           = headmodel_org;
 mnesource_org  = ft_sourceanalysis(cfg, evoked);
@@ -250,77 +250,9 @@ cfg.funparameter = 'pow';
 figure; ft_sourcemovie(cfg, mnesource_tmp);
 
 %% Save source
-disp('Saving...');
+fprintf('Saving...');
 save(mneOrg_outFname, 'mnesource_org', '-v7.3');
 save(mneTmp_outFname, 'mnesource_tmp', '-v7.3');
 disp('done')
-
-%% (re)load
-disp('Loading...');
-load(mneOrg_outFname);
-load(mneTmp_outFname);
-disp('done')
-
-%% Plot topographies
-times = [0.000 0.072 0.162 0.237 0.307 0.480];
-
-lw = min([mnesource_org.avg.pow(:); mnesource_tmp.avg.pow(:)]);
-up = max([mnesource_org.avg.pow(:); mnesource_tmp.avg.pow(:)]);
-up = up - 0.80*up;
-
-mnediff = mnesource_org;
-mnediff.avg.pow = mnesource_tmp.avg.pow-mnesource_org.avg.pow;
-
-cd(out_folder)
-for tt = 1:length(times)
-    cfg = [];
-    cfg.method          = 'surface';
-    cfg.funparameter    = 'pow';
-    cfg.funcolormap     = 'OrRd';    % Change for better color options
-    cfg.latency         = times(tt);     % The time-point to plot (s)
-    cfg.colorbar        = 'no';
-    cfg.funcolorlim     = [lw, up];
-    
-    ft_sourceplot(cfg, mnesource_org); 
-    title(['Original MRI (',num2str(times(tt)*1000),' ms)'], 'fontsize', 20);
-    view([0 0 1])
-    
-    fname = ['mne_org',num2str(times(tt)*1000),'.png'];
-    print(fname, '-dpng'); close
-    
-    ft_sourceplot(cfg, mnesource_tmp); 
-    title(['Warped template MRI (',num2str(times(tt)*1000),' ms)'], 'fontsize', 20)
-    view([0 0 1])
-
-    fname = ['mne_tmp',num2str(times(tt)*1000),'.png'];
-    print(fname, '-dpng'); close
-    
-    cfg.funcolormap     = 'RdBu';    % Change for better color options
-    cfg.funcolorlim     = [min(mnediff.avg.pow(:))/2, max(mnediff.avg.pow(:)/2)];
-    ft_sourceplot(cfg, mnediff); 
-    title(['Difference (',num2str(times(tt)*1000),' ms)'], 'fontsize', 20)
-    view([0 0 1])
-    
-    fname = ['mne_dif',num2str(times(tt)*1000),'.png'];
-    print(fname, '-dpng'); close
-end
-
-%% Plot global mean power
-tim = mnesource_org.time;
-gmp_org = mean(mnesource_org.avg.pow);
-gmp_tmp = mean(mnesource_tmp.avg.pow);
-
-figure; set(gcf,'Position',[0 0 1000 400]); hold on
-plot(tim, gmp_org, 'b', 'linewidth', 2)
-plot(tim, gmp_tmp, 'r', 'linewidth', 2)
-xlim([min(tim), max(tim)])
-title('Global mean power')
-xlabel('Time (s)');
-yy = get(gca, 'ylim'); ylim(yy);
-for ll = 1:length(times)
-    line([times(ll), times(ll)], yy, 'color', 'k', 'linestyle', '--')
-end
-
-% print(fullfile(out_folder, 'mne_globalpow.png'), '-dpng')
 
 %END

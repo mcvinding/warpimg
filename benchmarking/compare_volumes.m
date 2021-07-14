@@ -25,8 +25,8 @@ load(fullfile(data_path, 'headmodel_tmp.mat'))
 load(fullfile(data_path, 'headmodel_org.mat'))
 
 %% Convert to cm for more easy intrepretation of volumes
-headmodel_tmp = ft_convert_units(headmodel_tmp, 'cm');
-headmodel_org = ft_convert_units(headmodel_org, 'cm');
+headmodel_tmp = ft_convert_units(headmodel_tmp, 'mm');
+headmodel_org = ft_convert_units(headmodel_org, 'mm');
 
 %% Get volume and surface area
 [~, v_org] = convhull(headmodel_org.bnd.pos);
@@ -43,18 +43,18 @@ pct_dasurf = (asurf_org-asurf_tmp)/asurf_org*100
 figure; set(gcf,'Position',[0 0 1200 400]); hold on
 
 subplot(1,3,1); hold on
-ft_plot_headmodel(headmodel_org, 'facealpha', 0.1, 'facecolor', 'b')
-ft_plot_headmodel(headmodel_tmp, 'facealpha', 0.1, 'facecolor', 'r')
+ft_plot_headmodel(headmodel_org, 'facealpha', 0.2, 'facecolor', 'c')
+ft_plot_headmodel(headmodel_tmp, 'facealpha', 0.5, 'facecolor', 'r')
 view([0 1 0]); title('Coronal')
 
 subplot(1,3,2); hold on
-ft_plot_headmodel(headmodel_org, 'facealpha', 0.1, 'facecolor', 'b')
-ft_plot_headmodel(headmodel_tmp, 'facealpha', 0.1, 'facecolor', 'r')
+ft_plot_headmodel(headmodel_org, 'facealpha', 0.2, 'facecolor', 'c')
+ft_plot_headmodel(headmodel_tmp, 'facealpha', 0.5, 'facecolor', 'r')
 view([1 0 0]); title('Sagittal')
 
 subplot(1,3,3); hold on
-ft_plot_headmodel(headmodel_org, 'facealpha', 0.1, 'facecolor', 'b')
-ft_plot_headmodel(headmodel_tmp, 'facealpha', 0.1, 'facecolor', 'r')
+ft_plot_headmodel(headmodel_org, 'facealpha', 0.2, 'facecolor', 'c')
+ft_plot_headmodel(headmodel_tmp, 'facealpha', 0.5, 'facecolor', 'r')
 view([0 0 1]); title('Axial')
 
 print(fullfile(out_path, 'headmodels.png'), '-dpng')
