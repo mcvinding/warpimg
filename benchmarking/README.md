@@ -5,23 +5,26 @@ Compare MEG source reconstruction results using the subject's original MRI and a
 <ref>
 
 Please cite the reference above if you use the procedure in your work or want to share/redistribute the example scripts.
-
-How to create the warped templated and demonstrrated in the example script [Example_01_warp_temp2subj](https://github.com/mcvinding/warpimg/blob/main/example_01_warp_temp2subj.m) and ow to use the warped template to create headmodels for MEG source reconstruction is demonstrated in the example script [Example_02_create_headmodels](https://github.com/mcvinding/warpimg/blob/main/example_02_create_headmodels.m) on the [main page](https://github.com/mcvinding/warpimg).
+    
+The MEG dataset used in the paper to compare source reconstruction methods can be found at: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5053234.svg)](https://doi.org/10.5281/zenodo.5053234)
 
 ## In this folder
-* `A1_dipole_analysis`: Do simple dipole fits to evoked response
-* `A2_compare_dipoles.m`:
-* `B1_dics_analysis.m`: 
-* `C1_virtual_chan.m`:
-* `D1_do_mne.m`:
+**Pre-processing**
+* `prepare_megdata.m`: Prepare MEG data for source reconstruction.
+* `run_freesurfer.sh` : Run Freesurfer procedure on orignal and warped MRI.
+* `run_postfreesurfer.sh` : Post-processing of Freeesurfer output to create surface source models.
 
-`compare_fs_output.m`       
-`compare_source_results.m`
-`compare_volumes.m`
+**MEG source reconstruction**   
+* `source_a_dipole.m`: Do dipole fits to evoked response.
+* `source_b_dics.m`: DICS source analysis of induced response.
+* `source_c_virtualchan.m`: Calculate LCMV "virtual channels" for evoked response.
+* `source_d_mne.m`: Minimum-norm estimate of evoked response.
+    
+**Comparisons**
+* `compare_fs_output.m`: Summaries and statistical comparison of morphological features from Freesurfer.
+* `compare_source_results.m` : Summaries and statistical comparison of the results of the four types of MEG source reconstruction.
+* `compare_volumes.m` : Summaries and statistical of headmodels.
 
-
-
-    `plot_dipoles.m`     `run_freesurfer.sh`
-            `plot_mris.m`
-    `create_sourcemodels.m`     `prepare_megdata.m`
-
+**Create figures**
+* `plot_dipoles.m`: Plot results from dipole analysis.
+* `plot_mris.m` : Various plots of the MRIs.
