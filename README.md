@@ -4,7 +4,7 @@
 
 Create individualised templte MRI that can be shared without breaking subject confidentiality. Warp a template MRI anatomy to subject MRI anatomy, to create a source space and forward model for MEG source analysis. The procedure is explained in details in the following paper:
 
-REF
+<REF>
 
 Please cite the reference above if you use the procedure in your work or want to share/redistribute the example scripts.
 
@@ -20,4 +20,5 @@ The example scripts present the pipeline implemented in MATAB (www.mathworks.com
 
 * [Example_01_warp_temp2subj](https://github.com/mcvinding/warpimg/blob/main/example_01_warp_temp2subj.m) shows how to create the individualised warped templates.
 * [Example_02_create_headmodels](https://github.com/mcvinding/warpimg/blob/main/example_02_create_headmodels.m) show how to use the warped template to create headmodels for MEG source reconstruction.
+* [Example_03_create_sourcemodel](https://github.com/mcvinding/warpimg/blob/main/example_03_create_sourcemodel.m) show how to use the warped template to create headmodels for MEG source reconstruction.
 * In the foler [benchmarking](https://github.com/mcvinding/warpimg/tree/main/benchmarking), you find the scripts used to compare MEG source reconstruction methods presented in the paper. 
