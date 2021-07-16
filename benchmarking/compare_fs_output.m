@@ -58,41 +58,42 @@ fs_dat_col = [dat_lh; dat_rh];
 xtmp = 1:length(fs_dat_org.StructName);
 names = fs_dat_org.StructName;
 
-figure; set(gcf,'Position',[0 0 2000 800])
+figure; set(gcf,'Position',[0 0 1800 800])
 
 subplot(9,1,1:2); hold on
 scatter(xtmp, fs_dat_org.SurfArea, '.b')
 scatter(xtmp, fs_dat_tmp.SurfArea, '.r')
 scatter(xtmp, fs_dat_col.SurfArea, '.k')
 title('Surface Area'); ylabel('mm^2')
-set(gca,'xtick',[])
+set(gca, 'xtick', [],'linewidth', 1.5)
+
 
 subplot(9,1,3:4); hold on
 scatter(xtmp, fs_dat_org.GrayVol, '.b')
 scatter(xtmp, fs_dat_tmp.GrayVol, '.r')
 scatter(xtmp, fs_dat_col.GrayVol, '.k')
 title('Gray Matter Volume'); ylabel('mm^3')
-set(gca,'xtick',[])
+set(gca,'xtick',[], 'linewidth', 1.5)
 
 subplot(9,1,5:6); hold on
 scatter(xtmp, fs_dat_org.ThickAvg, '.b')
 scatter(xtmp, fs_dat_tmp.ThickAvg, '.r')
 scatter(xtmp, fs_dat_col.ThickAvg, '.k')
 title('Average Thickness'); ylabel('mm')
-set(gca,'xtick',[])
+set(gca,'xtick',[], 'linewidth', 1.5)
 
 subplot(9,1,7:8); hold on
 scatter(xtmp, fs_dat_org.MeanCurv, '.b')
 scatter(xtmp, fs_dat_tmp.MeanCurv, '.r')
 scatter(xtmp, fs_dat_col.MeanCurv, '.k')
 title('Mean Curvature','Interpreter','none');  ylabel('mm^-1')
-set(gca,'xtick',xtmp,'xticklabel', [], 'TickLength', [0.005, 0])
+set(gca,'xtick',xtmp,'xticklabel', [], 'TickLength', [0.005, 0], 'linewidth', 1.5)
 % set(gca,'xtick',[])
 
 % note that the position is relative to your X/Y axis values
 for ii = 1:length(names)
     t = text(ii, 0.05, names{ii}, 'FontSize', 7, 'Interpreter','none');
-    set(t,'HorizontalAlignment','right','VerticalAlignment','top','Rotation',45);
+    set(t,'HorizontalAlignment','right','VerticalAlignment','top','Rotation',60);
 end
 
 print(fullfile(out_path, 'fs_summaries.png'), '-dpng')
