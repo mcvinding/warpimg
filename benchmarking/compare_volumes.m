@@ -2,15 +2,14 @@
 % 
 % <<REF>>
 %
-% Get summary statistics of the warped template and original MRI
-% headmodels. Do similarity comparison of the brainmask. Plot the
-% headmodels superimposed (Figure 3).
-% Analyse the similarity in atlas label location in volume.
+% Get summary statistics of the warped template and original MRIs. 
+% Run SPM segmentation and get volumes of compartments to compare.
+% Do similarity comparison of the brainmask. Plot the headmodels superimposed 
+% (Figure 3) Analyse the similarity in atlas label location in volume.
 
 addpath('~/fieldtrip/fieldtrip/')
 ft_defaults
 addpath('~/reliability_analysis/') % https://github.com/mcvinding/reliability_analysis
-
 
 %% Paths
 subjs = {'0177'};
@@ -19,25 +18,77 @@ data_path = '/home/mikkel/mri_warpimg/data/0177';
 out_path = '/home/mikkel/mri_warpimg/figures';
 ft_path   = '~/fieldtrip/fieldtrip/';
 
+%% Load MRIs
+load standard_mri                                   % Load Colin 27
+mri_colin = mri;                                    % Rename to avoid confusion
+load(fullfile(data_path, 'mri_tmp_resliced.mat'));  % Warped template MRI
+load(fullfile(data_path, 'mri_org_resliced.mat'));  % original subject MRI
+load(fullfile(data_path, 'mri_tmp_resliced2.mat'));  % Warped template MRI
+
+%% Segment
+cfg = [];
+cfg.output = 'tpm';
+mri_tmp_seg = ft_volumesegment(cfg, mri_tmp_resliced);
+mri_tmp2_seg = ft_volumesegment(cfg, mri_tmp_resliced2);
+mri_org_seg = ft_volumesegment(cfg, mri_org_resliced);
+mri_col_seg = ft_volumesegment(cfg, mri_colin);
+
+mri_tmp_seg.anatomy = mri_tmp_resliced.anatomy;
+mri_org_seg.anatomy = mri_org_resliced.anatomy;
+mri_col_seg.anatomy = mri_colin.anatomy;
+
+%% Summaries
+ft_checkdata(mri_tmp_seg, 'feedback', 'yes');
+ft_checkdata(mri_org_seg, 'feedback', 'yes');
+ft_checkdata(mri_col_seg, 'feedback', 'yes');
+
+% Gray
+gryvol_tmp = sum(mri_tmp_seg.gray(:))/1000;
+gryvol_org = sum(mri_org_seg.gray(:))/1000;
+gryvol_col = sum(mri_col_seg.gray(:))/1000;
+
+% White
+whtvol_tmp = sum(mri_tmp_seg.white(:))/1000;
+whtvol_org = sum(mri_org_seg.white(:))/1000;
+whtvol_col = sum(mri_col_seg.white(:))/1000;
+
+% CSF
+csfvol_tmp = sum(mri_tmp_seg.csf(:))/1000;
+csfvol_org = sum(mri_org_seg.csf(:))/1000;
+csfvol_col = sum(mri_col_seg.csf(:))/1000;
+
+% sum
+totvol_tmp = gryvol_tmp + whtvol_tmp + csfvol_tmp;
+totvol_org = gryvol_org + whtvol_org + csfvol_org;
+totvol_col = gryvol_col + whtvol_col + csfvol_col;
+
+%% Comparison
+(gryvol_tmp-gryvol_org)/gryvol_org*100
+(whtvol_tmp-whtvol_org)/whtvol_org*100
+(csfvol_tmp-csfvol_org)/csfvol_org*100
+
+%% Plot
+cfg = [];
+cfg.funparameter = 'white';
+ft_sourceplot(cfg, mri_tmp_seg)
+ft_sourceplot(cfg, mri_org_seg)
+ft_sourceplot(cfg, mri_col_seg)
+
+cfg = [];
+cfg.funparameter = 'gray';
+ft_sourceplot(cfg, mri_tmp_seg)
+ft_sourceplot(cfg, mri_org_seg)
+ft_sourceplot(cfg, mri_col_seg)
+
+cfg = [];
+cfg.funparameter = 'csf';
+ft_sourceplot(cfg, mri_tmp_seg)
+ft_sourceplot(cfg, mri_org_seg)
+ft_sourceplot(cfg, mri_col_seg)
+
 %% Load headmodels
-% Add a loop over files when testing
 load(fullfile(data_path, 'headmodel_tmp.mat'))
 load(fullfile(data_path, 'headmodel_org.mat'))
-
-%% Convert to cm for more easy intrepretation of volumes
-headmodel_tmp = ft_convert_units(headmodel_tmp, 'mm');
-headmodel_org = ft_convert_units(headmodel_org, 'mm');
-
-%% Get volume and surface area
-[~, v_org] = convhull(headmodel_org.bnd.pos);
-[~, v_tmp] = convhull(headmodel_tmp.bnd.pos);
-
-pct_dv = (v_org-v_tmp)/v_org*100
-
-asurf_org = surfaceArea(alphaShape(headmodel_org.bnd.pos));
-asurf_tmp = surfaceArea(alphaShape(headmodel_tmp.bnd.pos));
-
-pct_dasurf = (asurf_org-asurf_tmp)/asurf_org*100
 
 %% Plot headmodels
 figure; set(gcf,'Position',[0 0 1200 400]); hold on
