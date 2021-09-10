@@ -66,6 +66,7 @@ totvol_col = gryvol_col + whtvol_col + csfvol_col;
 (gryvol_tmp-gryvol_org)/gryvol_org*100
 (whtvol_tmp-whtvol_org)/whtvol_org*100
 (csfvol_tmp-csfvol_org)/csfvol_org*100
+(totvol_tmp-totvol_org)/totvol_org*100
 
 %% Plot
 cfg = [];
