@@ -23,27 +23,25 @@ load(fullfile(data_path, 'mri_tmp_resliced2.mat')); % Warped template MRI
 %% STEP 1: Segment inner volume of MRI.
 cfg = [];
 cfg.output = 'brain';
-mri_tmp_seg = ft_volumesegment(cfg, mri_tmp_resliced);
-mri_org_seg = ft_volumesegment(cfg, mri_org_resliced);
+mri_tmp_seg2 = ft_volumesegment(cfg, mri_tmp_resliced2);
 
 % Save (optional)
-save(fullfile(data_path, 'mri_tmp_seg.mat'), 'mri_tmp_seg')
-save(fullfile(data_path, 'mri_org_seq.mat'), 'mri_org_seg')
+save(fullfile(data_path, 'mri_tmp_seg2.mat'), 'mri_tmp_seg2')
 
 %% Plot segmentations for inspection
 % Plot segmentation for each
-mri_tmp_seg.anatomy = mri_tmp_resliced.anatomy;
-mri_org_seg.anatomy = mri_org_resliced.anatomy;
+load(fullfile(data_path, 'mri_org_seq.mat'))
+mri_tmp_seg2.anatomy = mri_tmp_resliced2.anatomy;
 
 cfg = [];
 cfg.anaparameter = 'anatomy';
 cfg.funparameter = 'brain';
-ft_sourceplot(cfg, mri_tmp_seg);
+ft_sourceplot(cfg, mri_tmp_seg2);
 ft_sourceplot(cfg, mri_org_seg);
 
 % Plot both segmentations on original volume
 pltvol = mri_org_resliced;
-pltvol.brain = mri_tmp_seg.brain+mri_org_seg.brain;
+pltvol.brain = mri_tmp_seg2.brain+mri_org_seg.brain;
 
 cfg.anaparameter = 'anatomy';
 cfg.funparameter = 'brain';
@@ -55,18 +53,18 @@ cfg = [];
 cfg.method      = 'projectmesh';
 cfg.tissue      = 'brain';
 cfg.numvertices = 3000;
-mesh_brain_tmp = ft_prepare_mesh(cfg, mri_tmp_seg);
-mesh_brain_org = ft_prepare_mesh(cfg, mri_org_seg);
+mesh_brain_tmp2 = ft_prepare_mesh(cfg, mri_tmp_seg2);
+% mesh_brain_org = ft_prepare_mesh(cfg, mri_org_seg);
 
 % Step 2B: create headmodels
 cfg = [];
 cfg.method = 'singleshell';
-headmodel_tmp = ft_prepare_headmodel(cfg, mesh_brain_tmp);
-headmodel_org = ft_prepare_headmodel(cfg, mesh_brain_org);
+headmodel_tmp2 = ft_prepare_headmodel(cfg, mesh_brain_tmp2);
+% headmodel_org = ft_prepare_headmodel(cfg, mesh_brain_org);
 
 % Save headmodels
-save(fullfile(data_path, 'headmodel_tmp.mat'), 'headmodel_tmp')
-save(fullfile(data_path, 'headmodel_org.mat'), 'headmodel_org')
+save(fullfile(data_path, 'headmodel_tmp2.mat'), 'headmodel_tmp2')
+% save(fullfile(data_path, 'headmodel_org.mat'), 'headmodel_org')
 disp('done')
 
 %% Plot headmodels for inspection
@@ -75,7 +73,7 @@ load(fullfile(data_path, 'grad.mat'))
 
 % Plot alignment with sensors
 subplot(1,2,1); hold on
-ft_plot_headmodel(headmodel_tmp, 'edgecolor','b', 'facealpha',0.5)
+ft_plot_headmodel(headmodel_tmp2, 'edgecolor','b', 'facealpha',0.5)
 ft_plot_sens(grad)
 ft_plot_headshape(headshape)
 title('template')
@@ -88,7 +86,7 @@ title('orig')
 
 % Plot just headmodels
 figure; hold on
-ft_plot_headmodel(headmodel_tmp, 'edgecolor','b', 'facealpha',0.5)
+ft_plot_headmodel(headmodel_tmp2, 'edgecolor','b', 'facealpha',0.5)
 ft_plot_headmodel(headmodel_org, 'edgecolor','r', 'facealpha',0.5)
 
 %END

@@ -36,11 +36,13 @@ mri_col_seg = ft_volumesegment(cfg, mri_colin);
 mri_tmp_seg.anatomy = mri_tmp_resliced.anatomy;
 mri_org_seg.anatomy = mri_org_resliced.anatomy;
 mri_col_seg.anatomy = mri_colin.anatomy;
+mri_tmp2_seg.anatomy = mri_tmp_resliced2.anatomy;
 
 %% Summaries
 ft_checkdata(mri_tmp_seg, 'feedback', 'yes');
 ft_checkdata(mri_org_seg, 'feedback', 'yes');
 ft_checkdata(mri_col_seg, 'feedback', 'yes');
+ft_checkdata(mri_tmp2_seg, 'feedback', 'yes');
 
 % Gray
 gryvol_tmp = sum(mri_tmp_seg.gray(:))/1000;
