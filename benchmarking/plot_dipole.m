@@ -63,7 +63,7 @@ norm(dip_grad_early_org.dip.pos-dip_grad_early_tmp.dip.pos)
 norm(dip_grad_late_org.dip.pos(1,:)-dip_grad_late_tmp.dip.pos(1,:))
 norm(dip_grad_late_org.dip.pos(2,:)-dip_grad_late_tmp.dip.pos(2,:))
 
-%% Plot single dip location
+%% Plot single dip location on original MRI
 % Grads
 figure; hold on
 pos = dip_grad_early_tmp.dip.pos;
@@ -73,7 +73,7 @@ ft_plot_dipole(dip_grad_early_tmp.dip.pos, mean(dip_grad_early_tmp.dip.mom,2), '
 view([0 -1 0])
 
 % Export
-print(fullfile(out_path, 'dip1_slice_grad.png'), '-dpng')
+print(fullfile(out_path, 'dip1_slice_grad_tmp.png'), '-dpng')
 
 % Mags
 figure; hold on
@@ -84,11 +84,37 @@ ft_plot_dipole(dip_mag_early_tmp.dip.pos, mean(dip_mag_early_tmp.dip.mom,2), 'di
 view([0 -1 0])
 
 % Export
+print(fullfile(out_path, 'dip1_slice_mags_tmp.png'), '-dpng')
+
+close all
+
+%% Plot single dip location on warped template
+% Grads
+figure; hold on
+pos = dip_grad_early_tmp.dip.pos;
+ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_tmp_resliced.transform,'location', pos, 'orientation', [0 1 0]); hold on
+ft_plot_dipole(dip_grad_early_org.dip.pos, mean(dip_grad_early_org.dip.mom,2), 'diameter', 10, 'unit', 'mm', 'color','c');
+ft_plot_dipole(dip_grad_early_tmp.dip.pos, mean(dip_grad_early_tmp.dip.mom,2), 'diameter', 10, 'unit', 'mm', 'color','r');
+view([0 -1 0])
+
+% Export
+print(fullfile(out_path, 'dip1_slice_grad.png'), '-dpng')
+
+% Mags
+figure; hold on
+pos = dip_mag_early_tmp.dip.pos;
+ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_tmp_resliced.transform,'location', pos, 'orientation', [0 1 0]); hold on
+ft_plot_dipole(dip_mag_early_org.dip.pos, mean(dip_mag_early_org.dip.mom,2), 'diameter', 10, 'unit', 'mm', 'color','c');
+ft_plot_dipole(dip_mag_early_tmp.dip.pos, mean(dip_mag_early_tmp.dip.mom,2), 'diameter', 10, 'unit', 'mm', 'color','r');
+view([0 -1 0])
+
+% Export
 print(fullfile(out_path, 'dip1_slice_mags.png'), '-dpng')
 
 close all
 
-%% Plot dual dip location
+
+%% Plot dual dip location on original MRI
 % Grads
 figure; hold on
 pos = mean(dip_grad_late_tmp.dip.pos(1,:),1);
@@ -114,6 +140,35 @@ view([0 -1 0])
 
 % Export
 print(fullfile(out_path, 'dip2_slice_mags.png'), '-dpng')
+
+close all
+
+%% Plot dual dip location on warped template
+% Grads
+figure; hold on
+pos = mean(dip_grad_late_tmp.dip.pos(1,:),1);
+ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_tmp_resliced.transform,'location', pos, 'orientation', [0 1 0]); hold on
+ft_plot_dipole(dip_grad_late_tmp.dip.pos(1,:), mean(dip_grad_late_tmp.dip.mom(1:3,:),2), 'diameter', 10, 'unit', 'mm', 'color','r'); hold on
+ft_plot_dipole(dip_grad_late_tmp.dip.pos(2,:), mean(dip_grad_late_tmp.dip.mom(4:6,:),2), 'diameter', 10, 'unit', 'mm', 'color','r'); hold on
+ft_plot_dipole(dip_grad_late_org.dip.pos(1,:), mean(dip_grad_late_org.dip.mom(1:3,:),2), 'diameter', 10, 'unit', 'mm', 'color','c'); hold on
+ft_plot_dipole(dip_grad_late_org.dip.pos(2,:), mean(dip_grad_late_org.dip.mom(4:6,:),2), 'diameter', 10, 'unit', 'mm', 'color','c'); hold on
+view([0 -1 0])
+
+% Export
+print(fullfile(out_path, 'dip2_slice_grad_tmp.png'), '-dpng')
+
+% Mags
+figure; hold on
+pos = mean(dip_mag_late_tmp.dip.pos(1,:),1);
+ft_plot_slice(mri_tmp_resliced.anatomy, 'transform', mri_tmp_resliced.transform,'location', pos, 'orientation', [0 1 0]); hold on
+ft_plot_dipole(dip_mag_late_tmp.dip.pos(1,:), mean(dip_mag_late_tmp.dip.mom(1:3,:),2), 'diameter', 10, 'unit', 'mm', 'color','r'); hold on
+ft_plot_dipole(dip_mag_late_tmp.dip.pos(2,:), mean(dip_mag_late_tmp.dip.mom(4:6,:),2), 'diameter', 10, 'unit', 'mm', 'color','r'); hold on
+ft_plot_dipole(dip_mag_late_org.dip.pos(1,:), mean(dip_mag_late_org.dip.mom(1:3,:),2), 'diameter', 10, 'unit', 'mm', 'color','c'); hold on
+ft_plot_dipole(dip_mag_late_org.dip.pos(2,:), mean(dip_mag_late_org.dip.mom(4:6,:),2), 'diameter', 10, 'unit', 'mm', 'color','c'); hold on
+view([0 -1 0])
+
+% Export
+print(fullfile(out_path, 'dip2_slice_mags_tmp.png'), '-dpng')
 
 close all
 
