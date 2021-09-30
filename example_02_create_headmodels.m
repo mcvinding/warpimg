@@ -15,7 +15,7 @@ ft_defaults
 
 %% Data paths
 raw_folder = '/home/share/workshop_source_reconstruction/20180206/MEG/NatMEG_0177/170424';
-data_path = '/home/mikkel/mri_scripts/warpig/data/0177';
+data_path = '/home/mikkel/mri_warpimg/data/0177';
 
 %% Load MRI
 load(fullfile(data_path, 'mri_tmp_resliced.mat')); % Warped template MRI
