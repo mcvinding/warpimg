@@ -73,7 +73,7 @@ ft_plot_dipole(dip_grad_early_tmp.dip.pos, mean(dip_grad_early_tmp.dip.mom,2), '
 view([0 -1 0])
 
 % Export
-print(fullfile(out_path, 'dip1_slice_grad_tmp.png'), '-dpng')
+print(fullfile(out_path, 'dip1_slice_grad_org.png'), '-dpng')
 
 % Mags
 figure; hold on
@@ -84,7 +84,7 @@ ft_plot_dipole(dip_mag_early_tmp.dip.pos, mean(dip_mag_early_tmp.dip.mom,2), 'di
 view([0 -1 0])
 
 % Export
-print(fullfile(out_path, 'dip1_slice_mags_tmp.png'), '-dpng')
+print(fullfile(out_path, 'dip1_slice_mags_org.png'), '-dpng')
 
 close all
 
@@ -98,7 +98,7 @@ ft_plot_dipole(dip_grad_early_tmp.dip.pos, mean(dip_grad_early_tmp.dip.mom,2), '
 view([0 -1 0])
 
 % Export
-print(fullfile(out_path, 'dip1_slice_grad.png'), '-dpng')
+print(fullfile(out_path, 'dip1_slice_grad_tmp.png'), '-dpng')
 
 % Mags
 figure; hold on
@@ -109,7 +109,7 @@ ft_plot_dipole(dip_mag_early_tmp.dip.pos, mean(dip_mag_early_tmp.dip.mom,2), 'di
 view([0 -1 0])
 
 % Export
-print(fullfile(out_path, 'dip1_slice_mags.png'), '-dpng')
+print(fullfile(out_path, 'dip1_slice_mags_tmp.png'), '-dpng')
 
 close all
 
@@ -126,7 +126,7 @@ ft_plot_dipole(dip_grad_late_org.dip.pos(2,:), mean(dip_grad_late_org.dip.mom(4:
 view([0 -1 0])
 
 % Export
-print(fullfile(out_path, 'dip2_slice_grad.png'), '-dpng')
+print(fullfile(out_path, 'dip2_slice_grad_org.png'), '-dpng')
 
 % Mags
 figure; hold on
@@ -139,7 +139,7 @@ ft_plot_dipole(dip_mag_late_org.dip.pos(2,:), mean(dip_mag_late_org.dip.mom(4:6,
 view([0 -1 0])
 
 % Export
-print(fullfile(out_path, 'dip2_slice_mags.png'), '-dpng')
+print(fullfile(out_path, 'dip2_slice_mags_org.png'), '-dpng')
 
 close all
 
