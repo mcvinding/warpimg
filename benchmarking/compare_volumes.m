@@ -18,73 +18,72 @@ data_path = '/home/mikkel/mri_warpimg/data/0177';
 out_path = '/home/mikkel/mri_warpimg/figures';
 ft_path   = '~/fieldtrip/fieldtrip/';
 
-%% Load MRIs
+%% Load MRIs  !!! SELECT ONLY THE ONES USED !!!
 load standard_mri                                   % Load Colin 27
 mri_colin = mri;                                    % Rename to avoid confusion
 load(fullfile(data_path, 'mri_tmp_resliced.mat'));  % Warped template MRI
 load(fullfile(data_path, 'mri_org_resliced.mat'));  % original subject MRI
 load(fullfile(data_path, 'mri_tmp_resliced3.mat'));  % Warped template MRI
 
-%% Segment
+%% Segment !!! ADD COLIN !!!
 cfg = [];
 cfg.output      = 'tpm';
 cfg.spmmethod   = 'new';
-mri_tmp_seg  = ft_volumesegment(cfg, mri_tmp_resliced);
-mri_tmp2_seg = ft_volumesegment(cfg, mri_tmp_resliced2);
-mri_tmp3_seg = ft_volumesegment(cfg, mri_warp2neuromag2);
-mri_org_seg  = ft_volumesegment(cfg, mri_org_resliced);
-mri_col_seg = ft_volumesegment(cfg, mri_colin);
+mri_org_seg_new = ft_volumesegment(cfg, mri_org_resliced);
+mri_tmp_seg_new = ft_volumesegment(cfg, mri_tmp_resliced);
 
-mri_tmp_seg.anatomy  = mri_tmp_resliced.anatomy;
-mri_org_seg.anatomy  = mri_org_resliced.anatomy;
-mri_tmp2_seg.anatomy = mri_tmp_resliced2.anatomy;
-mri_tmp3_seg.anatomy = mri_warp2neuromag2.anatomy;
-mri_col_seg.anatomy = mri_colin.anatomy;
+cfg = [];
+cfg.output      = 'tpm';
+cfg.spmmethod   = 'old';
+mri_org_seg_old = ft_volumesegment(cfg, mri_org_resliced);
+mri_tmp_seg_old = ft_volumesegment(cfg, mri_tmp_resliced);
+
+
+mri_tmp_seg_new.anatomy  = mri_tmp_resliced.anatomy;
+mri_org_seg_new.anatomy  = mri_org_resliced.anatomy;
+
+mri_tmp_seg_old.anatomy  = mri_tmp_resliced.anatomy;
+mri_org_seg_old.anatomy  = mri_org_resliced.anatomy;
 
 disp('done all')
 
-%%
+%%  !!! ADD COLIN !!!
 cfg = [];
 cfg.funparameter  = 'anatomy';
-cfg.maskparameter = 'bone';
-ft_sourceplot(cfg, mri_org_seg)
-ft_sourceplot(cfg, mri_tmp_seg)
-ft_sourceplot(cfg, mri_tmp2_seg)
-ft_sourceplot(cfg, mri_tmp3_seg)
+cfg.maskparameter = 'gray';
+ft_sourceplot(cfg, mri_org_seg_new)
+ft_sourceplot(cfg, mri_tmp_seg_new)
 
-%% Summaries
-ft_checkdata(mri_org_seg, 'feedback', 'yes');
-ft_checkdata(mri_tmp_seg, 'feedback', 'yes');
-ft_checkdata(mri_tmp2_seg, 'feedback', 'yes');
-ft_checkdata(mri_tmp3_seg, 'feedback', 'yes');
-% ft_checkdata(mri_col_seg, 'feedback', 'yes');
+%% Summaries  !!! ADD COLIN !!!
+ft_checkdata(mri_org_seg_new, 'feedback', 'yes');
+ft_checkdata(mri_tmp_seg_new, 'feedback', 'yes');
 
 %% Manual
-% Gray
-gryvol_tmp = sum(mri_tmp_seg.gray(:))/1000;
-gryvol_org = sum(mri_org_seg.gray(:))/1000;
-gryvol_col = sum(mri_col_seg.gray(:))/1000;
-
-% White
-whtvol_tmp = sum(mri_tmp_seg.white(:))/1000;
-whtvol_org = sum(mri_org_seg.white(:))/1000;
-whtvol_col = sum(mri_col_seg.white(:))/1000;
-
-% CSF
-csfvol_tmp = sum(mri_tmp_seg.csf(:))/1000;
-csfvol_org = sum(mri_org_seg.csf(:))/1000;
-csfvol_col = sum(mri_col_seg.csf(:))/1000;
-
-% sum
-totvol_tmp = gryvol_tmp + whtvol_tmp + csfvol_tmp;
-totvol_org = gryvol_org + whtvol_org + csfvol_org;
-totvol_col = gryvol_col + whtvol_col + csfvol_col;
-
-%% Comparison
-(gryvol_tmp-gryvol_org)/gryvol_org*100
-(whtvol_tmp-whtvol_org)/whtvol_org*100
-(csfvol_tmp-csfvol_org)/csfvol_org*100
-(totvol_tmp-totvol_org)/totvol_org*100
+% % Gray
+% gryvol_tmp = sum(mri_tmp_seg.gray(:))/1000;
+% gryvol_org = sum(mri_org_seg.gray(:))/1000;
+% gryvol_col = sum(mri_col_seg.gray(:))/1000;
+% 
+% % White
+% whtvol_tmp = sum(mri_tmp_seg.white(:))/1000;
+% whtvol_org = sum(mri_org_seg.white(:))/1000;
+% whtvol_col = sum(mri_col_seg.white(:))/1000;
+% 
+% % CSF
+% csfvol_tmp = sum(mri_tmp_seg.csf(:))/1000;
+% csfvol_org = sum(mri_org_seg.csf(:))/1000;
+% csfvol_col = sum(mri_col_seg.csf(:))/1000;
+% 
+% % sum
+% totvol_tmp = gryvol_tmp + whtvol_tmp + csfvol_tmp;
+% totvol_org = gryvol_org + whtvol_org + csfvol_org;
+% totvol_col = gryvol_col + whtvol_col + csfvol_col;
+% 
+% %% Comparison
+% (gryvol_tmp-gryvol_org)/gryvol_org*100
+% (whtvol_tmp-whtvol_org)/whtvol_org*100
+% (csfvol_tmp-csfvol_org)/csfvol_org*100
+% (totvol_tmp-totvol_org)/totvol_org*100
 
 %% Plot
 cfg = [];
@@ -104,30 +103,6 @@ cfg.funparameter = 'csf';
 ft_sourceplot(cfg, mri_tmp_seg)
 ft_sourceplot(cfg, mri_org_seg)
 ft_sourceplot(cfg, mri_col_seg)
-
-%% Load headmodels
-load(fullfile(data_path, 'headmodel_tmp.mat'))
-load(fullfile(data_path, 'headmodel_org.mat'))
-
-%% Plot headmodels
-figure; set(gcf,'Position',[0 0 1200 400]); hold on
-
-subplot(1,3,1); hold on
-ft_plot_headmodel(headmodel_org, 'facealpha', 0.2, 'facecolor', 'c')
-ft_plot_headmodel(headmodel_tmp, 'facealpha', 0.5, 'facecolor', 'r')
-view([0 1 0]); title('Coronal')
-
-subplot(1,3,2); hold on
-ft_plot_headmodel(headmodel_org, 'facealpha', 0.2, 'facecolor', 'c')
-ft_plot_headmodel(headmodel_tmp, 'facealpha', 0.5, 'facecolor', 'r')
-view([1 0 0]); title('Sagittal')
-
-subplot(1,3,3); hold on
-ft_plot_headmodel(headmodel_org, 'facealpha', 0.2, 'facecolor', 'c')
-ft_plot_headmodel(headmodel_tmp, 'facealpha', 0.5, 'facecolor', 'r')
-view([0 0 1]); title('Axial')
-
-% print(fullfile(out_path, 'headmodels.png'), '-dpng')
 
 %% Compare brainmasks
 fprintf('loading data... ')

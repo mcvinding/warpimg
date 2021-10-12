@@ -27,8 +27,8 @@ subjs = {'MC','RO','0177'};
 
 % Paths
 % mri_path = fullfile(raw_folder, 'MRI', 'dicoms');                       % Raw data folder
-meg_path = fullfile(raw_folder, 'MEG', ['NatMEG_',subjs{1}], '170424'); % Raw data folder
-sub_path = fullfile(out_folder, subjs{3});                              % Output folder
+meg_path = fullfile(raw_folder, 'MEG', ['NatMEG_',subjs{2}], '170424'); % Raw data folder
+sub_path = fullfile(out_folder, subjs{2});                              % Output folder
 
 %% STEP 1A: Load subject MRI
 
@@ -55,13 +55,13 @@ cfg.filename    = fullfile(sub_path, 'orig_neuromag_rs');   % Same base filename
 ft_volumewrite(cfg, mri_org_resliced)
 
 %% Step 2E: Make and save brainmask with template
-cfg = [];
-cfg.output      = 'brain';
-cfg.spmmethod   = 'new';
-org_seg = ft_volumesegment(cfg, mri_org_resliced);
-
-cfg.spmmethod   = 'old';
-org_seq_old = ft_volumesegment(cfg, mri_org_resliced);
+% cfg = [];
+% cfg.output      = 'brain';
+% cfg.spmmethod   = 'new';
+% org_seg = ft_volumesegment(cfg, mri_org_resliced);
+% 
+% cfg.spmmethod   = 'old';
+% org_seq_old = ft_volumesegment(cfg, mri_org_resliced);
 
 %% Make TPM
 cfg = [];
@@ -75,7 +75,7 @@ org_seq_new = ft_volumesegment(cfg, mri_org_resliced); disp('done')
 org_seq_new.anatomy =  mri_org_resliced.anatomy;
 
 cfg = []
-cfg.maskparameter = 'softtissue';
+cfg.maskparameter = 'gray';
 cfg.funparameter = 'anatomy';
 ft_sourceplot(cfg, org_seq_new)
 
@@ -112,23 +112,23 @@ sub_tpm.anatomy(:,:,:,4) = org_seq_new.bone;
 sub_tpm.anatomy(:,:,:,5) = org_seq_new.softtissue;
 sub_tpm.anatomy(:,:,:,6) = org_seq_new.air;
 sub_tpm.dim = [org_seq_new.dim, size(sub_tpm.anatomy, 4)];
-
+disp('done')
 
 %% Comparison
-ft_checkdata(org_seg,     'feedback', 'yes');
-ft_checkdata(org_seq_old, 'feedback', 'yes');
-ft_checkdata(org_seq_new, 'feedback', 'yes');
+% ft_checkdata(org_seg,     'feedback', 'yes');
+% ft_checkdata(org_seq_old, 'feedback', 'yes');
+% ft_checkdata(org_seq_new, 'feedback', 'yes');
 
 
 %% Inspect
-org_seg.anatomy     = mri_org_resliced.anatomy;
-org_seq_old.anatomy =  mri_org_resliced.anatomy;
-
-cfg = []
-cfg.maskparameter = 'brain';
-cfg.funparameter = 'anatomy';
-ft_sourceplot(cfg, org_seg)
-ft_sourceplot(cfg, org_seq_old)
+% org_seg.anatomy     = mri_org_resliced.anatomy;
+% org_seq_old.anatomy =  mri_org_resliced.anatomy;
+% 
+% cfg = []
+% cfg.maskparameter = 'brain';
+% cfg.funparameter = 'anatomy';
+% ft_sourceplot(cfg, org_seg)
+% ft_sourceplot(cfg, org_seq_old)
 
 %%
 % tst = ft_read_mri('c1sub_tpm.nii')
@@ -152,18 +152,18 @@ cfg = [];
 cfg.filetype    = 'nifti';          % .nii exntension
 cfg.parameter   = 'anatomy';
 cfg.datatype    = 'double';
-cfg.filename    = fullfile(sub_path, 'sub_tpm2');   % Same base filename but different format
+cfg.filename    = fullfile(sub_path, 'sub_tpm');   % Same base filename but different format
 ft_volumewrite(cfg, sub_tpm)
 
-tst = ft_read_mri(fullfile(sub_path,'sub_tpm2.nii'))
+% tst = ft_read_mri(fullfile(sub_path,'sub_tpm.nii'))
 
 %% Write brainmask image
-cfg = [];
-cfg.filetype    = 'nifti';          % .nii exntension
-cfg.parameter   = 'brain';
-cfg.datatype    = 'double';
-cfg.filename    = fullfile(sub_path, 'orig_mask');   % Same base filename but different format
-ft_volumewrite(cfg, org_seg)
+% cfg = [];
+% cfg.filetype    = 'nifti';          % .nii exntension
+% cfg.parameter   = 'brain';
+% cfg.datatype    = 'double';
+% cfg.filename    = fullfile(sub_path, 'orig_mask');   % Same base filename but different format
+% ft_volumewrite(cfg, org_seg)
 
 %% STEP 3: warp a template MRI to the individual MRI "template"
 % In this example, we load the Colin27 template (https://www.mcgill.ca/bic/software/tools-data-analysis/anatomical-mri/atlases/colin-27),
@@ -182,7 +182,7 @@ cfg.method      = 'interactive';
 cfg.coordsys    = 'neuromag';
 mri_colin_neuromag = ft_volumerealign(cfg, mri_colin);     
 
-%% Make brainmask for the template
+%% Make brainmask for the template (is this needed???)
 cfg = [];
 cfg.output = 'brain';
 col_seq = ft_volumesegment(cfg, mri_colin_neuromag);
@@ -192,16 +192,16 @@ col_seq = ft_volumesegment(cfg, mri_colin_neuromag);
 % col_seq_new = ft_volumesegment(cfg, mri_colin_neuromag);
 
 %% Inspect
-mri_colin_neuromag.inside = col_seq.brain;
-mri_colin_neuromag2 = mri_colin_neuromag;
-mri_colin_neuromag2.inside = col_seq_new.brain
-
-cfg = []
-cfg = []
-cfg.maskparameter = 'inside';
-cfg.funparameter = 'anatomy'
-ft_sourceplot(cfg, mri_colin_neuromag)
-ft_sourceplot(cfg, mri_colin_neuromag2)
+% mri_colin_neuromag.inside = col_seq.brain;
+% mri_colin_neuromag2 = mri_colin_neuromag;
+% mri_colin_neuromag2.inside = col_seq_new.brain
+% 
+% cfg = []
+% cfg = []
+% cfg.maskparameter = 'inside';
+% cfg.funparameter = 'anatomy'
+% ft_sourceplot(cfg, mri_colin_neuromag)
+% ft_sourceplot(cfg, mri_colin_neuromag2)
 
 %% Step 3B: Normalise template -> subject (neuromag coordsys)
 cfg = [];
@@ -210,7 +210,7 @@ cfg.spmmethod        = 'new';       % Note: method = "new" will only use SPM's d
 cfg.spmversion       = 'spm12';     % Default = "spm12"
 cfg.templatecoordsys = 'neuromag';  % Coordinate system of the template
 cfg.template         = fullfile(sub_path,'orig_neuromag_rs.nii'); % #Template created in step 2D
-cfg.tpm              = fullfile(sub_path,'sub_tpm2.nii');
+cfg.tpm              = fullfile(sub_path,'sub_tpm.nii');
 % cfg.templatemask     = fullfile(sub_path,'orig_mask.nii');
 mri_warp2neuromag2 = ft_volumenormalise2(cfg, mri_colin_neuromag);
 
@@ -221,16 +221,17 @@ mri_warp2neuromag2 = ft_determine_units(mri_warp2neuromag2);
 ft_sourceplot([], mri_warp2neuromag2); title('Warped2neuromag2')
 
 % Save
-saveas(gcf, fullfile(sub_path, ['template3', cfg.templatecoordsys,'.pdf']))
-close
+% saveas(gcf, fullfile(sub_path, ['template3', cfg.templatecoordsys,'.pdf']))
+% close
+disp('done')
 
-%% Save
+%% Save !!! FIX THIS STEP !!!
 % Renaming for filename consitency (optional -> not recommeded)
-mri_tmp_resliced2 = mri_warp2neuromag2;
+mri_tmp_resliced = mri_warp2neuromag2;
 
 % Save
 fprintf('saving...')
-save(fullfile(sub_path,'mri_tmp_resliced2'), 'mri_tmp_resliced2')
+save(fullfile(sub_path,'mri_tmp_resliced'), 'mri_tmp_resliced')
 disp('done')
 
 %% Preapre for Freesurfer
@@ -248,6 +249,6 @@ cfg.filename    = fullfile(fs_subjdir, '0177warp2', 'mri','orig', '001');
 cfg.filetype    = 'mgz';
 cfg.parameter   = 'anatomy';
 cfg.datatype    = 'double';
-ft_volumewrite(cfg, mri_tmp_resliced2);
+ft_volumewrite(cfg, mri_tmp_resliced);
 
 % END

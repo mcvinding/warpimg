@@ -4,7 +4,7 @@
 %
 % Create headmodels (volume conductor models) from anatomical MRIs for MEG 
 % source analysis. This is done for the template MRI warped to subject and for
-% the original subject MRI for comparison. This script run the process in
+% the original subject MRI for comparison. This script run the process
 % step by step for both the warped template and the orignal MRI to compare
 % the results later on.
 
@@ -36,14 +36,12 @@ save(fullfile(data_path, 'mri_org_seg.mat'), 'mri_org_seg')
 % Plot segmentation for each
 mri_tmp_seg.anatomy = mri_tmp_resliced.anatomy;
 mri_org_seg.anatomy = mri_org_resliced.anatomy;
-mri_org_seg_new.anatomy = mri_org_resliced.anatomy
 
 cfg = [];
 cfg.anaparameter = 'anatomy';
 cfg.funparameter = 'brain';
 ft_sourceplot(cfg, mri_tmp_seg);
 ft_sourceplot(cfg, mri_org_seg);
-ft_sourceplot(cfg, mri_org_seg_new);
 
 % Plot both segmentations on original volume
 pltvol = mri_org_resliced;
