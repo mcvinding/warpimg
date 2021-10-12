@@ -3,7 +3,7 @@
 % <ref>
 %
 % Import orignal MRI, align to MEG coordinate system and export as SPM 
-% readable % file. Import template (Colin) and "normalize" the template to
+% readable file. Import template (Colin) and "normalize" the template to
 % the original MRI. Save and export.
 
 %% Paths
@@ -22,12 +22,12 @@ ft_defaults
 
 %Subjects
 % Make a loop here for multiple subjects
-subjs = {'0177'};
+subjs = {'0177'}; ss = 1;
 
 % Paths
 mri_path = fullfile(raw_folder, 'MRI', 'dicoms');                       % Raw data folder
-meg_path = fullfile(raw_folder, 'MEG', ['NatMEG_',subjs{1}], '170424'); % Raw data folder
-sub_path = fullfile(out_folder, subjs{1});                              % Output folder
+meg_path = fullfile(raw_folder, 'MEG', ['NatMEG_',subjs{ss}], '170424'); % Raw data folder
+sub_path = fullfile(out_folder, subjs{ss});                              % Output folder
 
 %% STEP 1A: Load subject MRI
 % Load the subject anatomical image. Determine coordinate systen (ras, origin not
@@ -137,6 +137,7 @@ cfg.spmmethod        = 'old';       % Note: method = "new" will only use SPM's d
 cfg.spmversion       = 'spm12';     % Default = "spm12"
 cfg.templatecoordsys = 'neuromag';  % Coordinate system of the template
 cfg.template         = fullfile(sub_path,'orig_neuromag_rs.nii'); % #Template created in step 2D
+
 mri_warp2neuromag = ft_volumenormalise(cfg, mri_colin_neuromag);
 
 % Determine unit of volume (mm)
@@ -146,7 +147,7 @@ mri_warp2neuromag = ft_determine_units(mri_warp2neuromag);
 ft_sourceplot([], mri_warp2neuromag); title('Warped2neuromag')
 
 % Save
-saveas(gcf, fullfile(sub_path, ['template2', cfg.templatecoordsys,'.pdf']))
+saveas(gcf, fullfile(sub_path, ['template', cfg.templatecoordsys,'.pdf']))
 close
 
 %% Save
@@ -182,7 +183,7 @@ fs_subjdir = '/home/mikkel/mri_warpimg/fs_subjects_dir/';
 
 % Warped
 cfg = [];
-cfg.filename    = fullfile(fs_subjdir, '0177warp', 'mri','orig', '001');
+cfg.filename    = fullfile(fs_subjdir, '0177warp3', 'mri','orig', '001');
 cfg.filetype    = 'mgz';
 cfg.parameter   = 'anatomy';
 cfg.datatype    = 'double';

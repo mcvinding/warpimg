@@ -23,27 +23,43 @@ load standard_mri                                   % Load Colin 27
 mri_colin = mri;                                    % Rename to avoid confusion
 load(fullfile(data_path, 'mri_tmp_resliced.mat'));  % Warped template MRI
 load(fullfile(data_path, 'mri_org_resliced.mat'));  % original subject MRI
-load(fullfile(data_path, 'mri_tmp_resliced2.mat'));  % Warped template MRI
+load(fullfile(data_path, 'mri_tmp_resliced3.mat'));  % Warped template MRI
 
 %% Segment
 cfg = [];
-cfg.output = 'tpm';
-mri_tmp_seg = ft_volumesegment(cfg, mri_tmp_resliced);
+cfg.output      = 'tpm';
+cfg.spmmethod   = 'new';
+mri_tmp_seg  = ft_volumesegment(cfg, mri_tmp_resliced);
 mri_tmp2_seg = ft_volumesegment(cfg, mri_tmp_resliced2);
-mri_org_seg = ft_volumesegment(cfg, mri_org_resliced);
+mri_tmp3_seg = ft_volumesegment(cfg, mri_warp2neuromag2);
+mri_org_seg  = ft_volumesegment(cfg, mri_org_resliced);
 mri_col_seg = ft_volumesegment(cfg, mri_colin);
 
-mri_tmp_seg.anatomy = mri_tmp_resliced.anatomy;
-mri_org_seg.anatomy = mri_org_resliced.anatomy;
-mri_col_seg.anatomy = mri_colin.anatomy;
+mri_tmp_seg.anatomy  = mri_tmp_resliced.anatomy;
+mri_org_seg.anatomy  = mri_org_resliced.anatomy;
 mri_tmp2_seg.anatomy = mri_tmp_resliced2.anatomy;
+mri_tmp3_seg.anatomy = mri_warp2neuromag2.anatomy;
+mri_col_seg.anatomy = mri_colin.anatomy;
+
+disp('done all')
+
+%%
+cfg = [];
+cfg.funparameter  = 'anatomy';
+cfg.maskparameter = 'bone';
+ft_sourceplot(cfg, mri_org_seg)
+ft_sourceplot(cfg, mri_tmp_seg)
+ft_sourceplot(cfg, mri_tmp2_seg)
+ft_sourceplot(cfg, mri_tmp3_seg)
 
 %% Summaries
-ft_checkdata(mri_tmp_seg, 'feedback', 'yes');
 ft_checkdata(mri_org_seg, 'feedback', 'yes');
-ft_checkdata(mri_col_seg, 'feedback', 'yes');
+ft_checkdata(mri_tmp_seg, 'feedback', 'yes');
 ft_checkdata(mri_tmp2_seg, 'feedback', 'yes');
+ft_checkdata(mri_tmp3_seg, 'feedback', 'yes');
+% ft_checkdata(mri_col_seg, 'feedback', 'yes');
 
+%% Manual
 % Gray
 gryvol_tmp = sum(mri_tmp_seg.gray(:))/1000;
 gryvol_org = sum(mri_org_seg.gray(:))/1000;
@@ -111,7 +127,7 @@ ft_plot_headmodel(headmodel_org, 'facealpha', 0.2, 'facecolor', 'c')
 ft_plot_headmodel(headmodel_tmp, 'facealpha', 0.5, 'facecolor', 'r')
 view([0 0 1]); title('Axial')
 
-print(fullfile(out_path, 'headmodels.png'), '-dpng')
+% print(fullfile(out_path, 'headmodels.png'), '-dpng')
 
 %% Compare brainmasks
 fprintf('loading data... ')

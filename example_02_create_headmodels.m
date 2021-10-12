@@ -24,23 +24,26 @@ load(fullfile(data_path, 'mri_org_resliced.mat')); % original subject MRI
 %% STEP 1: Segment inner volume of MRI.
 cfg = [];
 cfg.output = 'brain';
+cfg.method = 'new';
 mri_tmp_seg = ft_volumesegment(cfg, mri_tmp_resliced);
 mri_org_seg = ft_volumesegment(cfg, mri_org_resliced);
 
 % Save (optional)
 save(fullfile(data_path, 'mri_tmp_seg.mat'), 'mri_tmp_seg')
-save(fullfile(data_path, 'mri_org_seq.mat'), 'mri_org_seg')
+save(fullfile(data_path, 'mri_org_seg.mat'), 'mri_org_seg')
 
 %% Plot segmentations for inspection
 % Plot segmentation for each
 mri_tmp_seg.anatomy = mri_tmp_resliced.anatomy;
 mri_org_seg.anatomy = mri_org_resliced.anatomy;
+mri_org_seg_new.anatomy = mri_org_resliced.anatomy
 
 cfg = [];
 cfg.anaparameter = 'anatomy';
 cfg.funparameter = 'brain';
 ft_sourceplot(cfg, mri_tmp_seg);
 ft_sourceplot(cfg, mri_org_seg);
+ft_sourceplot(cfg, mri_org_seg_new);
 
 % Plot both segmentations on original volume
 pltvol = mri_org_resliced;
