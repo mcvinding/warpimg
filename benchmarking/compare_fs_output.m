@@ -27,8 +27,8 @@ end
 fs_dat_org = [dat_lh; dat_rh];
 
 %% Read and arragne data: Warped template
-dat_lh = readtable('/home/mikkel/mri_warpimg/fs_subjects_dir/0177warp/stats/lh.aparc.a2009s.txt') ;
-dat_rh = readtable('/home/mikkel/mri_warpimg/fs_subjects_dir/0177warp/stats/rh.aparc.a2009s.txt') ;
+dat_lh = readtable('/home/mikkel/mri_warpimg/fs_subjects_dir/0177warp3/stats/lh.aparc.a2009s.txt') ;
+dat_rh = readtable('/home/mikkel/mri_warpimg/fs_subjects_dir/0177warp3/stats/rh.aparc.a2009s.txt') ;
 
 dat_lh.Properties.VariableNames = varnam;
 dat_rh.Properties.VariableNames = varnam;
@@ -57,35 +57,36 @@ fs_dat_col = [dat_lh; dat_rh];
 %% Plot summary statistics
 xtmp = 1:length(fs_dat_org.StructName);
 names = fs_dat_org.StructName;
+marksize = 20;
 
 figure; set(gcf,'Position',[0 0 1800 800])
 
 subplot(9,1,1:2); hold on
-scatter(xtmp, fs_dat_org.SurfArea, '.b')
-scatter(xtmp, fs_dat_tmp.SurfArea, '.r')
-scatter(xtmp, fs_dat_col.SurfArea, '.k')
+scatter(xtmp, fs_dat_org.SurfArea, marksize, 'ob', 'filled')
+scatter(xtmp, fs_dat_tmp.SurfArea, marksize, '^r', 'filled')
+scatter(xtmp, fs_dat_col.SurfArea, marksize, 'dk')
 title('Surface Area'); ylabel('mm^2')
 set(gca, 'xtick', [],'linewidth', 1.5)
 
 
 subplot(9,1,3:4); hold on
-scatter(xtmp, fs_dat_org.GrayVol, '.b')
-scatter(xtmp, fs_dat_tmp.GrayVol, '.r')
-scatter(xtmp, fs_dat_col.GrayVol, '.k')
+scatter(xtmp, fs_dat_org.GrayVol, marksize, 'ob', 'filled')
+scatter(xtmp, fs_dat_tmp.GrayVol, marksize, '^r', 'filled')
+scatter(xtmp, fs_dat_col.GrayVol, marksize, 'dk')
 title('Gray Matter Volume'); ylabel('mm^3')
 set(gca,'xtick',[], 'linewidth', 1.5)
 
 subplot(9,1,5:6); hold on
-scatter(xtmp, fs_dat_org.ThickAvg, '.b')
-scatter(xtmp, fs_dat_tmp.ThickAvg, '.r')
-scatter(xtmp, fs_dat_col.ThickAvg, '.k')
+scatter(xtmp, fs_dat_org.ThickAvg, marksize, 'ob', 'filled')
+scatter(xtmp, fs_dat_tmp.ThickAvg, marksize, '^r', 'filled')
+scatter(xtmp, fs_dat_col.ThickAvg, marksize, 'dk')
 title('Average Thickness'); ylabel('mm')
 set(gca,'xtick',[], 'linewidth', 1.5)
 
 subplot(9,1,7:8); hold on
-scatter(xtmp, fs_dat_org.MeanCurv, '.b')
-scatter(xtmp, fs_dat_tmp.MeanCurv, '.r')
-scatter(xtmp, fs_dat_col.MeanCurv, '.k')
+scatter(xtmp, fs_dat_org.MeanCurv, marksize, 'ob', 'filled')
+scatter(xtmp, fs_dat_tmp.MeanCurv, marksize, '^r', 'filled')
+scatter(xtmp, fs_dat_col.MeanCurv, marksize, 'dk')
 title('Mean Curvature','Interpreter','none');  ylabel('mm^-1')
 set(gca,'xtick',xtmp,'xticklabel', [], 'TickLength', [0.005, 0], 'linewidth', 1.5)
 % set(gca,'xtick',[])
@@ -96,7 +97,7 @@ for ii = 1:length(names)
     set(t,'HorizontalAlignment','right','VerticalAlignment','top','Rotation',60);
 end
 
-print(fullfile(out_path, 'fs_summaries.png'), '-dpng')
+% print(fullfile(out_path, 'fs_summaries.png'), '-dpng')
 
 %% Comparison
 addpath('/home/mikkel/reliability_analysis/') %https://github.com/mcvinding/reliability_analysis

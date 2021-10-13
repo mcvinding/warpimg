@@ -211,7 +211,6 @@ cfg.spmversion       = 'spm12';     % Default = "spm12"
 cfg.templatecoordsys = 'neuromag';  % Coordinate system of the template
 cfg.template         = fullfile(sub_path,'orig_neuromag_rs.nii'); % #Template created in step 2D
 cfg.tpm              = fullfile(sub_path,'sub_tpm.nii');
-% cfg.templatemask     = fullfile(sub_path,'orig_mask.nii');
 mri_warp2neuromag2 = ft_volumenormalise2(cfg, mri_colin_neuromag);
 
 % Determine unit of volume (mm)
