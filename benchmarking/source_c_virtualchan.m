@@ -128,7 +128,7 @@ atlas_grid.tissuelabel(labs)
 %% Plot for inspection
 cfg = [];
 cfg.interpmethod = 'nearest';
-cfg.parameter    = 'tissue';
+cfg.parameter    = 'pow';
 mri_tst = ft_sourceinterpolate(cfg, source_org, mri_org_resliced);
 
 mri_tst.tissue(~ismember(mri_tst.tissue, labs)) = 0;
