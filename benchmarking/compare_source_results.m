@@ -14,12 +14,49 @@
 addpath('/home/mikkel/reliability_analysis/') % https://github.com/mcvinding/reliability_analysis
 
 %% Paths
-data_path = '/home/mikkel/mri_warpimg/data/0177';
+data_path = '/home/mikkel/mri_warpimg/data/0177/170424';
 
 %% A) Dipole time-series
 % Load data
-load(fullfile(data_path, 'dip_mag_all.mat'))
-load(fullfile(data_path, 'dip_grad_all.mat'))
+fprintf('loading data... ')
+load(fullfile(data_path, 'dip_mag_early.mat'))
+load(fullfile(data_path, 'dip_mag_late.mat'))
+load(fullfile(data_path, 'dip_grad_early.mat'))
+load(fullfile(data_path, 'dip_grad_late.mat'))
+load(fullfile(data_path, 'dip_mag_all.mat'));
+load(fullfile(data_path, 'dip_grad_all.mat'));
+disp('done')
+
+% Convert dip units for plotting
+dip_mag_early_org.dip = ft_convert_units(dip_mag_early_org.dip, 'mm');
+dip_mag_early_tmp.dip = ft_convert_units(dip_mag_early_tmp.dip, 'mm');
+
+dip_mag_late_org.dip = ft_convert_units(dip_mag_late_org.dip, 'mm');
+dip_mag_late_tmp.dip = ft_convert_units(dip_mag_late_tmp.dip, 'mm');
+
+dip_grad_early_org.dip = ft_convert_units(dip_grad_early_org.dip, 'mm');
+dip_grad_early_tmp.dip = ft_convert_units(dip_grad_early_tmp.dip, 'mm');
+
+dip_grad_late_org.dip = ft_convert_units(dip_grad_late_org.dip, 'mm');
+dip_grad_late_tmp.dip = ft_convert_units(dip_grad_late_tmp.dip, 'mm');
+
+dip_grad_all_org.dip = ft_convert_units(dip_grad_all_org.dip, 'mm');
+dip_grad_all_tmp.dip = ft_convert_units(dip_grad_all_tmp.dip, 'mm');
+
+% Compare dip: mags early component
+% Distance error
+norm(dip_mag_early_org.dip.pos-dip_mag_early_tmp.dip.pos)
+
+% Compare dip: mags late component
+norm(dip_mag_late_org.dip.pos(1,:)-dip_mag_late_tmp.dip.pos(1,:))
+norm(dip_mag_late_org.dip.pos(2,:)-dip_mag_late_tmp.dip.pos(2,:))
+
+% Compare dip: grads early component
+norm(dip_grad_early_org.dip.pos-dip_grad_early_tmp.dip.pos)
+
+% Compare dip: grads late component
+norm(dip_grad_late_org.dip.pos(1,:)-dip_grad_late_tmp.dip.pos(1,:))
+norm(dip_grad_late_org.dip.pos(2,:)-dip_grad_late_tmp.dip.pos(2,:))
 
 % Comparison: mags
 dat = [sqrt(sum(dip_mag_all_org.dip.mom).^2); sqrt(sum(dip_mag_all_tmp.dip.mom).^2)];
@@ -69,12 +106,6 @@ for ii = 1:length(vrtavg_org.label)
     [iccc_vrtchans(ii), lbc(ii), ubc(ii)] = ICC(dat', 'C-1');
 end
 
-% All
-dat = [ vrtavg_org.avg(:)'; vrtavg_tmp.avg(:)'];
-a_vrtchan = reliability_analysis(dat, 'n2fast');
-[icca_vrtchan, lba, uba] = ICC(dat', 'A-1');
-[iccc_vrtchan, lbc, ubc] = ICC(dat', 'C-1');
-
 %% D) MNE
 fprintf('Loading data... ')
 load(fullfile(data_path, 'mnesource_org.mat'));
@@ -92,7 +123,6 @@ a_mnex = reliability_analysis(dat, 'alphaprime');
 dat2 = log(dat);
 a_mne2 = reliability_analysis(dat2, 'alphaprime');
 a_mne3 = reliability_analysis(dat2, 'n2fast');
-
 
 %% Save results
 fprintf('Save results... ')

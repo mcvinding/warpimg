@@ -8,8 +8,8 @@ addpath('~/fieldtrip/fieldtrip')
 ft_defaults
 
 %% Paths
-data_path = '/home/mikkel/mri_warpimg/data/0177';
-out_path = '/home/mikkel/mri_warpimg/figures';
+data_path = '/home/mikkel/mri_warpimg/data/0177/170424';
+out_path  = '/home/mikkel/mri_warpimg/figures';
 
 %% Load data
 fprintf('Loading data...')

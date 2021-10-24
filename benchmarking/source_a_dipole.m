@@ -12,7 +12,7 @@ addpath('~/fieldtrip/fieldtrip/')
 ft_defaults
 
 %% File paths
-data_path  = '/home/mikkel/mri_warpimg/data/0177';
+data_path = '/home/mikkel/mri_warpimg/data/0177/170424';
 
 %% Load data
 load(fullfile(data_path, 'headmodel_tmp.mat'));

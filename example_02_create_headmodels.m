@@ -10,22 +10,22 @@
 
 %% Setup
 addpath '~/fieldtrip/fieldtrip/'
-addpath '~/fieldtrip/fieldtrip/external/mne'
 ft_defaults
 
 %% Data paths
-raw_folder = '/home/share/workshop_source_reconstruction/20180206/MEG/NatMEG_0177/170424';
-data_path = '/home/mikkel/mri_warpimg/data/0177';
+data_path  = '/home/mikkel/mri_warpimg/data/0177/170424';
 
 %% Load MRI
-load(fullfile(data_path, 'mri_tmp_resliced.mat')); % Warped template MRI
-load(fullfile(data_path, 'mri_org_resliced.mat')); % original subject MRI
+fprintf('Loading data... ')
+load(fullfile(data_path, 'mri_warptmp.mat'));       % Warped template MRI
+load(fullfile(data_path, 'mri_org_resliced.mat'));  % original subject MRI
+disp('done')
 
 %% STEP 1: Segment inner volume of MRI.
 cfg = [];
-cfg.output = 'brain';
-cfg.method = 'new';
-mri_tmp_seg = ft_volumesegment(cfg, mri_tmp_resliced);
+cfg.output      = 'brain';
+cfg.spmmethod   = 'new';
+mri_tmp_seg = ft_volumesegment(cfg, mri_warptmp);
 mri_org_seg = ft_volumesegment(cfg, mri_org_resliced);
 
 % Save (optional)
@@ -34,7 +34,7 @@ save(fullfile(data_path, 'mri_org_seg.mat'), 'mri_org_seg')
 
 %% Plot segmentations for inspection
 % Plot segmentation for each
-mri_tmp_seg.anatomy = mri_tmp_resliced.anatomy;
+mri_tmp_seg.anatomy = mri_warptmp.anatomy;
 mri_org_seg.anatomy = mri_org_resliced.anatomy;
 
 cfg = [];
@@ -42,14 +42,6 @@ cfg.anaparameter = 'anatomy';
 cfg.funparameter = 'brain';
 ft_sourceplot(cfg, mri_tmp_seg);
 ft_sourceplot(cfg, mri_org_seg);
-
-% Plot both segmentations on original volume
-pltvol = mri_org_resliced;
-pltvol.brain = mri_tmp_seg.brain+mri_org_seg.brain;
-
-cfg.anaparameter = 'anatomy';
-cfg.funparameter = 'brain';
-ft_sourceplot(cfg, pltvol);
 
 %% STEP 2: Construct mesh from inner volume and create the headmodel
 % Step 2A: create 3D brain mesh
@@ -77,20 +69,20 @@ load(fullfile(data_path, 'grad.mat'))
 
 % Plot alignment with sensors
 subplot(1,2,1); hold on
-ft_plot_headmodel(headmodel_tmp, 'edgecolor','b', 'facealpha',0.5)
+ft_plot_headmodel(headmodel_tmp, 'edgecolor','r', 'facealpha',0.5)
 ft_plot_sens(grad)
 ft_plot_headshape(headshape)
 title('template')
 
 subplot(1,2,2); hold on
-ft_plot_headmodel(headmodel_org, 'edgecolor','r', 'facealpha',0.5)
+ft_plot_headmodel(headmodel_org, 'edgecolor','b', 'facealpha',0.5)
 ft_plot_sens(grad)
 ft_plot_headshape(headshape)
 title('orig')
 
 % Plot just headmodels
 figure; hold on
-ft_plot_headmodel(headmodel_tmp, 'edgecolor','b', 'facealpha',0.5)
-ft_plot_headmodel(headmodel_org, 'edgecolor','r', 'facealpha',0.5)
+ft_plot_headmodel(headmodel_tmp, 'edgecolor','r', 'facealpha',0.5)
+ft_plot_headmodel(headmodel_org, 'edgecolor','b', 'facealpha',0.5)
 
 %END

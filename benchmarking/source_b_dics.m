@@ -12,7 +12,7 @@ addpath '~/fieldtrip/fieldtrip/'
 ft_defaults
 
 %% Compute paths
-data_path = '/home/mikkel/mri_warpimg/data/0177';
+data_path = '/home/mikkel/mri_warpimg/data/0177/170424';
 
 %% Load data
 fprintf('Loading... ')
@@ -53,12 +53,6 @@ load(fullfile(data_path, 'headmodel_org.mat'));
 load(fullfile(data_path, 'headmodel_tmp.mat'));
 load(fullfile(data_path, 'sourcemodels_mni.mat'));
 disp('done')
-
-%% Inspect
-% ft_determine_coordsys(mri_tmp_resliced, 'interactive', 'no'); hold on;
-% ft_plot_sens(data.grad, 'unit', 'mm');
-% ft_plot_headmodel(headmodel_tmp, 'facealpha', 0.5, 'facecolor', 'r')
-% ft_plot_mesh(sourcemodel_org, 'vertexcolor','b')
 
 %% Make leadfields
 cfg = [];

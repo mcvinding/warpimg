@@ -10,9 +10,8 @@ addpath '~/fieldtrip/fieldtrip/'
 ft_defaults
 
 %% Data paths
-data_path = '/home/mikkel/mri_warpimg/data/0177';
+data_path = '/home/mikkel/mri_warpimg/data/0177/170424';
 ft_path   = '~/fieldtrip/fieldtrip/';
-out_path  = '/home/mikkel/mri_warpimg/figures';
 
 %% Load data
 fprintf('Loading data... ')
@@ -24,7 +23,7 @@ atlas = ft_read_atlas(fullfile(ft_path, '/template/atlas/aal/ROI_MNI_V4.nii'));
 
 % Load MRI
 load(fullfile(data_path,'mri_org_resliced'));
-load(fullfile(data_path,'mri_tmp_resliced'));
+load(fullfile(data_path,'mri_warptmp'));
 
 % Load headmodels and source spaces
 load(fullfile(data_path, 'headmodel_org.mat'));
@@ -37,12 +36,6 @@ headmodel_org = ft_convert_units(headmodel_org, 'm');
 headmodel_tmp = ft_convert_units(headmodel_tmp, 'm');
 sourcemodel_org = ft_convert_units(sourcemodel_org, 'm');
 sourcemodel_tmp = ft_convert_units(sourcemodel_tmp, 'm');
-
-%% Inspect
-% ft_determine_coordsys(mri_org_resliced, 'interactive', 'no'); hold on;
-% ft_plot_headmodel(headmodel_org, 'facealpha', 0.25, 'facecolor', 'r')
-% ft_plot_mesh(sourcemodel_org.pos(sourcemodel_org.inside,:), 'vertexcolor','b')
-% ft_plot_sens(evoked.grad);
 
 %% Add atlas info to sources
 load(fullfile(ft_path, 'template/sourcemodel/standard_sourcemodel3d6mm'));
@@ -126,19 +119,19 @@ labs = [1, 2, 13, 14, 57, 58, 77, 78, 97, 98]; % Manually found labels
 atlas_grid.tissuelabel(labs)
 
 %% Plot for inspection
-cfg = [];
-cfg.interpmethod = 'nearest';
-cfg.parameter    = 'pow';
-mri_tst = ft_sourceinterpolate(cfg, source_org, mri_org_resliced);
-
-mri_tst.tissue(~ismember(mri_tst.tissue, labs)) = 0;
-mri_tst.tissue(ismember(mri_tst.tissue, labs)) = 1;
-mri_tst.tissuelabel = {'ROI'};
-
-cfg = [];
-cfg.funparameter = 'tissue';
-cfg.anaparameter = 'anatomy';
-ft_sourceplot(cfg, mri_tst)
+% cfg = [];
+% cfg.interpmethod = 'nearest';
+% cfg.parameter    = 'pow';
+% mri_tst = ft_sourceinterpolate(cfg, source_org, mri_org_resliced);
+% 
+% mri_tst.tissue(~ismember(mri_tst.tissue, labs)) = 0;
+% mri_tst.tissue(ismember(mri_tst.tissue, labs)) = 1;
+% mri_tst.tissuelabel = {'ROI'};
+% 
+% cfg = [];
+% cfg.funparameter = 'tissue';
+% cfg.anaparameter = 'anatomy';
+% ft_sourceplot(cfg, mri_tst)
 
 %% Make virtual channel
 cfg = [];

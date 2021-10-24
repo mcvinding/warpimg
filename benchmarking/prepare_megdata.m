@@ -10,7 +10,7 @@ addpath('~/fieldtrip/fieldtrip')
 ft_defaults
 
 %% Folders
-data_path = '/home/mikkel/mri_warpimg/data/0177';
+data_path = '/home/mikkel/mri_warpimg/data/0177/170424';
 
 %% Load data
 fprintf('Loading data... ')

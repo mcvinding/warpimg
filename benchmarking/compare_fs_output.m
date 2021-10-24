@@ -27,8 +27,8 @@ end
 fs_dat_org = [dat_lh; dat_rh];
 
 %% Read and arragne data: Warped template
-dat_lh = readtable('/home/mikkel/mri_warpimg/fs_subjects_dir/0177warp3/stats/lh.aparc.a2009s.txt') ;
-dat_rh = readtable('/home/mikkel/mri_warpimg/fs_subjects_dir/0177warp3/stats/rh.aparc.a2009s.txt') ;
+dat_lh = readtable('/home/mikkel/mri_warpimg/fs_subjects_dir/0177warp/stats/lh.aparc.a2009s.txt') ;
+dat_rh = readtable('/home/mikkel/mri_warpimg/fs_subjects_dir/0177warp/stats/rh.aparc.a2009s.txt') ;
 
 dat_lh.Properties.VariableNames = varnam;
 dat_rh.Properties.VariableNames = varnam;
@@ -97,7 +97,7 @@ for ii = 1:length(names)
     set(t,'HorizontalAlignment','right','VerticalAlignment','top','Rotation',60);
 end
 
-% print(fullfile(out_path, 'fs_summaries.png'), '-dpng')
+print(fullfile(out_path, 'fs_summaries.png'), '-dpng')
 
 %% Comparison
 addpath('/home/mikkel/reliability_analysis/') %https://github.com/mcvinding/reliability_analysis

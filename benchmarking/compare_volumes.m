@@ -9,81 +9,36 @@
 
 addpath('~/fieldtrip/fieldtrip/')
 ft_defaults
-addpath('~/reliability_analysis/') % https://github.com/mcvinding/reliability_analysis
 
 %% Paths
-subjs = {'0177'};
-
-data_path = '/home/mikkel/mri_warpimg/data/0177';
+data_path = '/home/mikkel/mri_warpimg/data/0177/170424';
 out_path = '/home/mikkel/mri_warpimg/figures';
 ft_path   = '~/fieldtrip/fieldtrip/';
 
-%% Load MRIs  !!! SELECT ONLY THE ONES USED !!!
-load standard_mri                                   % Load Colin 27
-mri_colin = mri;                                    % Rename to avoid confusion
-load(fullfile(data_path, 'mri_tmp_resliced.mat'));  % Warped template MRI
-load(fullfile(data_path, 'mri_org_resliced.mat'));  % original subject MRI
-load(fullfile(data_path, 'mri_tmp_resliced3.mat'));  % Warped template MRI
+%% Load MRIs
+load standard_mri                                       % Load Colin 27
+mri_colin = mri;                                        % Rename to avoid confusion
+load(fullfile(data_path, 'mri_org_resliced.mat'));      % original subject MRI
+load(fullfile(data_path, 'mri_warptmp.mat'));           % Warped template MRI
 
-%% Segment !!! ADD COLIN !!!
+%% Segment
 cfg = [];
 cfg.output      = 'tpm';
 cfg.spmmethod   = 'new';
-mri_org_seg_new = ft_volumesegment(cfg, mri_org_resliced);
-mri_tmp_seg_new = ft_volumesegment(cfg, mri_tmp_resliced);
+mri_org_seg = ft_volumesegment(cfg, mri_org_resliced);
+mri_tmp_seg = ft_volumesegment(cfg, mri_warptmp);
+mri_col_seg = ft_volumesegment(cfg, mri_colin);
 
-cfg = [];
-cfg.output      = 'tpm';
-cfg.spmmethod   = 'old';
-mri_org_seg_old = ft_volumesegment(cfg, mri_org_resliced);
-mri_tmp_seg_old = ft_volumesegment(cfg, mri_tmp_resliced);
-
-
-mri_tmp_seg_new.anatomy  = mri_tmp_resliced.anatomy;
-mri_org_seg_new.anatomy  = mri_org_resliced.anatomy;
-
-mri_tmp_seg_old.anatomy  = mri_tmp_resliced.anatomy;
-mri_org_seg_old.anatomy  = mri_org_resliced.anatomy;
+mri_tmp_seg.anatomy = mri_tmp_resliced.anatomy;
+mri_org_seg.anatomy = mri_org_resliced.anatomy;
+mri_col_seg.anatomy = mri_colin.anatomy;
 
 disp('done all')
 
-%%  !!! ADD COLIN !!!
-cfg = [];
-cfg.funparameter  = 'anatomy';
-cfg.maskparameter = 'gray';
-ft_sourceplot(cfg, mri_org_seg_new)
-ft_sourceplot(cfg, mri_tmp_seg_new)
-
-%% Summaries  !!! ADD COLIN !!!
-ft_checkdata(mri_org_seg_new, 'feedback', 'yes');
-ft_checkdata(mri_tmp_seg_new, 'feedback', 'yes');
-
-%% Manual
-% % Gray
-% gryvol_tmp = sum(mri_tmp_seg.gray(:))/1000;
-% gryvol_org = sum(mri_org_seg.gray(:))/1000;
-% gryvol_col = sum(mri_col_seg.gray(:))/1000;
-% 
-% % White
-% whtvol_tmp = sum(mri_tmp_seg.white(:))/1000;
-% whtvol_org = sum(mri_org_seg.white(:))/1000;
-% whtvol_col = sum(mri_col_seg.white(:))/1000;
-% 
-% % CSF
-% csfvol_tmp = sum(mri_tmp_seg.csf(:))/1000;
-% csfvol_org = sum(mri_org_seg.csf(:))/1000;
-% csfvol_col = sum(mri_col_seg.csf(:))/1000;
-% 
-% % sum
-% totvol_tmp = gryvol_tmp + whtvol_tmp + csfvol_tmp;
-% totvol_org = gryvol_org + whtvol_org + csfvol_org;
-% totvol_col = gryvol_col + whtvol_col + csfvol_col;
-% 
-% %% Comparison
-% (gryvol_tmp-gryvol_org)/gryvol_org*100
-% (whtvol_tmp-whtvol_org)/whtvol_org*100
-% (csfvol_tmp-csfvol_org)/csfvol_org*100
-% (totvol_tmp-totvol_org)/totvol_org*100
+%% Summaries
+ft_checkdata(mri_org_seg, 'feedback', 'yes');
+ft_checkdata(mri_tmp_seg, 'feedback', 'yes');
+ft_checkdata(mri_col_seg, 'feedback', 'yes');
 
 %% Plot
 cfg = [];
@@ -104,33 +59,15 @@ ft_sourceplot(cfg, mri_tmp_seg)
 ft_sourceplot(cfg, mri_org_seg)
 ft_sourceplot(cfg, mri_col_seg)
 
-%% Compare brainmasks
-fprintf('loading data... ')
-load(fullfile(data_path,'mri_orig_seg.mat'))
-load(fullfile(data_path,'mri_tmp_seg.mat'))
-disp('done')
-
-x = mri_orig_seg.brain(:);
-y = mri_tmp_seg.brain(:);
-
-dat = [x'; y'];
-
-fprintf('Calculating alpha... ')
-a_brainmask = kripAlpha(dat, 'nominal');
-disp('done')
-
-save(fullfile(data_path,'a_brainmask'), 'a_brainmask')
-
-%% Reload alpha
-% load(fullfile(data_path,'a_brainmask'))
-
 %% Atlas comparison
 % Read atlas, source models, and MRIs
 atlas = ft_read_atlas(fullfile(ft_path, '/template/atlas/aal/ROI_MNI_V4.nii'));
 load(fullfile(ft_path, 'template/sourcemodel/standard_sourcemodel3d6mm'));
 load(fullfile(data_path, 'sourcemodels_mni.mat'));
 load(fullfile(data_path,'mri_org_resliced'));
-load(fullfile(data_path,'mri_tmp_resliced'));
+load(fullfile(data_path,'mri_warptmp'));
+load(fullfile(data_path, 'mri_tmp_seg.mat'))
+load(fullfile(data_path, 'mri_org_seg.mat'))
 
 sourcemodel = ft_convert_units(sourcemodel, 'mm');
 mri_org_resliced.anatomy(mri_org_resliced.anatomy>5000) = 5000;
@@ -151,16 +88,16 @@ sourcemodel_org.tissuelabel = atlas_grid.tissuelabel;
 sourcemodel_tmp.tissue = atlas_grid.tissue;
 sourcemodel_tmp.tissuelabel = atlas_grid.tissuelabel;
 
-% Interpolate atals to MRI
+% Interpolate atlas for original and warped template onto original anatomy
 cfg = [];
 cfg.parameter       = 'tissue';
 cfg.interpmethod    = 'nearest'; 
 atlasintp_org = ft_sourceinterpolate(cfg, sourcemodel_org, mri_org_resliced);
-atlasintp_tmp = ft_sourceinterpolate(cfg, sourcemodel_tmp, mri_tmp_resliced);
+atlasintp_tmp = ft_sourceinterpolate(cfg, sourcemodel_tmp, mri_org_resliced);
 
 % Remove "air"
-atlasintp_org.tissue(~mri_orig_seg.brain) = nan;
-atlasintp_tmp.tissue(~mri_tmp_seg.brain) = nan;
+atlasintp_org.tissue(atlasintp_org.tissue==0) = nan;
+atlasintp_tmp.tissue(atlasintp_tmp.tissue==0) = nan;
 
 cfg = [];
 cfg.funparameter    = 'tissue';
@@ -172,14 +109,16 @@ ft_sourceplot(cfg, atlasintp_org)
 ft_sourceplot(cfg, atlasintp_tmp)
 
 %% Similarity analysis
+addpath('~/reliability_analysis/') % https://github.com/mcvinding/reliability_analysis
 
-x = atlasintp_org.tissue(:);
-y = atlasintp_tmp.tissue(:);
+% Prepare data: remove voxels outside the brain
+x = atlasintp_org.tissue(mri_org_seg.brain==1);
+y = atlasintp_tmp.tissue(mri_org_seg.brain==1);
 
 dat = [x'; y'];
 
 fprintf('Calculating alpha... ')
-a_atlas = kripAlpha(dat, 'nominal');
+a_atlas = kripAlpha(dat, 'nominal', 1);
 disp('done')
 
 %END
