@@ -1,9 +1,9 @@
 % MRI plots
 % 
-% <<REF>>
+% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.
 %
 % Plot the volumes for the original MRI, the warped template, and the
-% original Colin. Used in Figure 1.
+% original Colin. Used in Figure 2.
 close all
 addpath '~/fieldtrip/fieldtrip/'
 ft_defaults

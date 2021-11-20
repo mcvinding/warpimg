@@ -1,6 +1,6 @@
 %% Prepare MEG data for source analysis. 
 %
-% <<REF>>
+% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.
 %
 % Read preprocessed tutorial data and get epochs and evoked responses. Save
 % the data for the epochs, the epochs cut to time of interest, and the

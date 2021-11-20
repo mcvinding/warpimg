@@ -1,6 +1,6 @@
 %% Dipole source analysis
 % 
-% <<REF>>
+% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069
 %
 % Do dipole fits to evoked componet. Single dipole fits to magnetometers and
 % gradiomenters for SI. Dual dipole fits to magnetometers and gradiomenters 

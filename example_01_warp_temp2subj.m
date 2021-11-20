@@ -1,6 +1,6 @@
 %% Warp template MRI to subject MRI for creating source model
 %
-% <ref>
+% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069
 %
 % Import orignal MRI, align to MEG coordinate system and export as SPM 
 % readable file. Import template (Colin) and "normalize" the template to

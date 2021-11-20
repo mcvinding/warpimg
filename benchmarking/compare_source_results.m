@@ -1,6 +1,6 @@
 %% Reliability analysis of source reconstructed data
 % 
-% <<REF>>
+% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.
 %
 % Compare the results of MEG source reconstructions from 1) dipole fits, 2)
 % DICS beamformer, 3) LCMV beamformer virtual channels, and D) minimum-norm

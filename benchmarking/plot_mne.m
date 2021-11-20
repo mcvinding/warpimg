@@ -1,9 +1,8 @@
 %% Plot MNE source results
 % 
-% <<REF>>
+% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.
 %
 % Plot results of MNE source reconstructions (Figure 7).
-
 close all
 addpath '~/fieldtrip/fieldtrip/'
 ft_defaults

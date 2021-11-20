@@ -1,6 +1,6 @@
 %% Create headmodels 
 %
-% <ref>
+% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069
 %
 % Create headmodels (volume conductor models) from anatomical MRIs for MEG 
 % source analysis. This is done for the template MRI warped to subject and for

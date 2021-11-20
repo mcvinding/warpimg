@@ -1,6 +1,6 @@
 %% LCMV virtual channels
 %
-% <<REF>>
+% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069
 %
 % Calculate virtual channels in a set of predefined labels. Estimate
 % LCMV beamformer filters from evoked and apply to single trial epochs.

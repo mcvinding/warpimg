@@ -1,6 +1,6 @@
 %% MNE source reconstruction
 %
-% <<REF>>
+% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069
 %
 % Do MNE source reconstruction on evoked response. Plot results.
 %
