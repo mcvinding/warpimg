@@ -2,7 +2,7 @@
 
 Compare MEG source reconstruction results using the subject's original MRI and an individualsed warped template. The scripts in this folder where used for the analysis presented in the following paper:
 
-Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.
+> **Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069**
 
 Please cite the reference above if you use the procedure in your work or want to share/redistribute the example scripts.
     
