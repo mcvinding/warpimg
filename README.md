@@ -4,7 +4,7 @@
 
 Create individualised templte MRI that can be shared without breaking subject confidentiality. Warp a template MRI anatomy to subject MRI anatomy, to create a source space and forward model for MEG source analysis. The procedure is explained in details in the following paper:
 
-Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069
+> **Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069**
 
 Please cite the reference above if you use the procedure in your work or want to share/redistribute the example scripts.
 
