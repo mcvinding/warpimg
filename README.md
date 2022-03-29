@@ -14,7 +14,7 @@ MRI data, even if defaced, are by nature sensitive information as they depicts t
 
 The scripts in this folder is one solution to meet this paradox by providing a pipeline for warping template structural MRI to individual subject structural MRI for creation of source spaces and forward models used in MEG (and EEG - though not validated) source analysis. The warped MRIs can be shared without breaking subject confidentiality while still providing adequate precision for replicating findings obtained when using the original individual subject MRI.
 
-The example scripts present the pipeline implemented in MATAB (www.mathworks.com) using FieldTrip (www.fieldtriptoolbox.org).
+The example scripts present the pipeline implemented in MATLAB (www.mathworks.com) using FieldTrip (www.fieldtriptoolbox.org).
 
 ## In this folder
 
