@@ -1,6 +1,6 @@
 %% Make grid source models
 % 
-% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069
+% Vinding, M.C., & Oostenveld, R. (2022). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality. NeuroImage, 119165. https://doi.org/10.1016/j.neuroimage.2022.119165
 %
 % Create standard grid source models for volumetric headmodel for orignal
 % MRI and warped template. Import standard MNI grid source space and warp

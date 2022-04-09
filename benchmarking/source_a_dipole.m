@@ -1,6 +1,6 @@
 %% Dipole source analysis
 % 
-% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069
+% Vinding, M. C., & Oostenveld, R. (2022). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality. NeuroImage, 119165. https://doi.org/10.1016/j.neuroimage.2022.119165
 %
 % Do dipole fits to evoked componet. Single dipole fits to magnetometers and
 % gradiomenters for SI. Dual dipole fits to magnetometers and gradiomenters 
@@ -12,7 +12,7 @@ addpath('~/fieldtrip/fieldtrip/')
 ft_defaults
 
 %% File paths
-data_path = '/home/mikkel/mri_warpimg/data/0177/170424';
+data_path = '~/mri_warpimg/data/0177/170424';
 
 %% Load data
 load(fullfile(data_path, 'headmodel_tmp.mat'));

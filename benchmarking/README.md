@@ -1,8 +1,8 @@
-# Comparing MEG source reconstruction for original MRI and warped template
+# Comparing MEG source reconstruction for original MRI and individualised warped template
 
 Compare MEG source reconstruction results using the subject's original MRI and an individualsed warped template. The scripts in this folder where used for the analysis presented in the following paper:
 
-> **Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069**
+> **Vinding, M. C., & Oostenveld, R. (2022). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality. *NeuroImage*, 119165. https://doi.org/10.1016/j.neuroimage.2022.119165**
 
 Please cite the reference above if you use the procedure in your work or want to share/redistribute the example scripts.
     
@@ -10,8 +10,9 @@ The MEG dataset used in the paper to compare source reconstruction methods can b
 
 ## In this folder
 **Pre-processing**
+
 * `prepare_megdata.m`: Prepare MEG data for source reconstruction.
-* `run_freesurfer.sh` : Run Freesurfer procedure on orignal and warped MRI.
+* `run_freesurfer.sh` : Run Freesurfer procedure on original and warped MRI.
 * `run_postfreesurfer.sh` : Post-processing of Freeesurfer output to create surface source models.
 
 **MEG source reconstruction**   
@@ -19,7 +20,8 @@ The MEG dataset used in the paper to compare source reconstruction methods can b
 * `source_b_dics.m`: DICS source analysis of induced response.
 * `source_c_virtualchan.m`: Calculate LCMV "virtual channels" for evoked response.
 * `source_d_mne.m`: Minimum-norm estimate of evoked response.
-    
+  
+
 **Comparisons**
 * `compare_fs_output.m`: Summaries and statistical comparison of morphological features from Freesurfer.
 * `compare_source_results.m` : Summaries and statistical comparison of the results of the four types of MEG source reconstruction.

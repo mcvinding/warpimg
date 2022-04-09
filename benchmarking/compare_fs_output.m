@@ -1,20 +1,27 @@
 %% Compare Freesurfer summaries of MRIs
 % 
-% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.
+% Vinding, M. C., & Oostenveld, R. (2022). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality. NeuroImage, 119165. https://doi.org/10.1016/j.neuroimage.2022.119165
 %
 % Read Freesurfer output stat files and compare the similarity between the
 % original MRI, the warped template, and the unmodified Colin27 template.
 % Incl. plots. Stats files from Freesurfer has been manually convertet from
 % .stats to .txt.
 
-out_path = '/home/mikkel/mri_warpimg/figures';
+% Compare similarity using Krippendorff Alpha
+% (https://github.com/mcvinding/reliability_analysis), as reported in the
+% article. Additional reliability analysis using interclass correlation
+% coefficent (ICC).
+
+% ICC script: Arash Salarian (2021). Intraclass Correlation Coefficient (ICC) (https://www.mathworks.com/matlabcentral/fileexchange/22099-intraclass-correlation-coefficient-icc), MATLAB Central File Exchange. Retrieved June 8, 2021.
+
+out_path = '~/mri_warpimg/figures';
 
 % Variable names
 varnam = {'StructName' 'NumVert' 'SurfArea' 'GrayVol' 'ThickAvg' 'ThickStd' 'MeanCurv' 'GausCurv' 'FoldInd' 'CurvInd'};
 
 %% Read and arragne data: Original MRI
-dat_lh = readtable('/home/mikkel/mri_warpimg/fs_subjects_dir/0177/stats/lh.aparc.a2009s.txt') ;
-dat_rh = readtable('/home/mikkel/mri_warpimg/fs_subjects_dir/0177/stats/rh.aparc.a2009s.txt') ;
+dat_lh = readtable('~/mri_warpimg/fs_subjects_dir/0177/stats/lh.aparc.a2009s.txt') ;
+dat_rh = readtable('~/mri_warpimg/fs_subjects_dir/0177/stats/rh.aparc.a2009s.txt') ;
 
 dat_lh.Properties.VariableNames = varnam;
 dat_rh.Properties.VariableNames = varnam;
@@ -27,8 +34,8 @@ end
 fs_dat_org = [dat_lh; dat_rh];
 
 %% Read and arragne data: Warped template
-dat_lh = readtable('/home/mikkel/mri_warpimg/fs_subjects_dir/0177warp/stats/lh.aparc.a2009s.txt') ;
-dat_rh = readtable('/home/mikkel/mri_warpimg/fs_subjects_dir/0177warp/stats/rh.aparc.a2009s.txt') ;
+dat_lh = readtable('~/mri_warpimg/fs_subjects_dir/0177warp/stats/lh.aparc.a2009s.txt') ;
+dat_rh = readtable('~/mri_warpimg/fs_subjects_dir/0177warp/stats/rh.aparc.a2009s.txt') ;
 
 dat_lh.Properties.VariableNames = varnam;
 dat_rh.Properties.VariableNames = varnam;
@@ -41,8 +48,8 @@ end
 fs_dat_tmp = [dat_lh; dat_rh];
 
 %% Read and arragne data: Unmodified template
-dat_lh = readtable('/home/mikkel/mri_warpimg/fs_subjects_dir/colin/stats/lh.aparc.a2009s.txt') ;
-dat_rh = readtable('/home/mikkel/mri_warpimg/fs_subjects_dir/colin/stats/rh.aparc.a2009s.txt') ;
+dat_lh = readtable('~/mri_warpimg/fs_subjects_dir/colin/stats/lh.aparc.a2009s.txt') ;
+dat_rh = readtable('~/mri_warpimg/fs_subjects_dir/colin/stats/rh.aparc.a2009s.txt') ;
 
 dat_lh.Properties.VariableNames = varnam;
 dat_rh.Properties.VariableNames = varnam;
@@ -100,7 +107,7 @@ end
 print(fullfile(out_path, 'fs_summaries.png'), '-dpng')
 
 %% Comparison
-addpath('/home/mikkel/reliability_analysis/') %https://github.com/mcvinding/reliability_analysis
+addpath('~/reliability_analysis/') % https://github.com/mcvinding/reliability_analysis
 
 %% Surface area
 dat_ot = [fs_dat_org.SurfArea'; fs_dat_tmp.SurfArea'];

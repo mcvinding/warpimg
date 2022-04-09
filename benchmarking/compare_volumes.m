@@ -1,19 +1,18 @@
 %% Comparison of volume headmodels
 % 
-% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.
+% Vinding, M. C., & Oostenveld, R. (2022). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality. NeuroImage, 119165. https://doi.org/10.1016/j.neuroimage.2022.119165
 %
 % Get summary statistics of the warped template and original MRIs. 
 % Run SPM segmentation and get volumes of compartments to compare.
 % Do similarity comparison of the brainmask. Plot the headmodels superimposed 
 % (Figure 3) Analyse the similarity in atlas label location in volume.
 
-addpath('~/fieldtrip/fieldtrip/')
-ft_defaults
-
 %% Paths
-data_path = '/home/mikkel/mri_warpimg/data/0177/170424';
-out_path = '/home/mikkel/mri_warpimg/figures';
+data_path = '~/mri_warpimg/data/0177/170424';
+out_path  = '~/mri_warpimg/figures';
 ft_path   = '~/fieldtrip/fieldtrip/';
+addpath(ft_path)
+ft_defaults
 
 %% Load MRIs
 load standard_mri                                       % Load Colin 27
@@ -64,8 +63,8 @@ ft_sourceplot(cfg, mri_col_seg)
 atlas = ft_read_atlas(fullfile(ft_path, '/template/atlas/aal/ROI_MNI_V4.nii'));
 load(fullfile(ft_path, 'template/sourcemodel/standard_sourcemodel3d6mm'));
 load(fullfile(data_path, 'sourcemodels_mni.mat'));
-load(fullfile(data_path,'mri_org_resliced'));
-load(fullfile(data_path,'mri_warptmp'));
+load(fullfile(data_path, 'mri_org_resliced'));
+load(fullfile(data_path, 'mri_warptmp'));
 load(fullfile(data_path, 'mri_tmp_seg.mat'))
 load(fullfile(data_path, 'mri_org_seg.mat'))
 

@@ -1,6 +1,6 @@
 %% Plot ERF
 % 
-% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.
+% Vinding, M. C., & Oostenveld, R. (2022). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality. NeuroImage, 119165. https://doi.org/10.1016/j.neuroimage.2022.119165
 %
 % the ERF and topographies (Figure 1).
 
@@ -8,8 +8,8 @@ addpath('~/fieldtrip/fieldtrip')
 ft_defaults
 
 %% Paths
-data_path = '/home/mikkel/mri_warpimg/data/0177/170424';
-out_path  = '/home/mikkel/mri_warpimg/figures';
+data_path = '~/mri_warpimg/data/0177/170424';
+out_path  = '~/mri_warpimg/figures';
 
 %% Load data
 fprintf('Loading data...')
@@ -80,3 +80,5 @@ ft_topoplotER(cfg, evoked)
 print(fullfile(out_path, 'erf_topoLate.png'), '-dpng')
 
 close all
+
+%END

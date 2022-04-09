@@ -1,17 +1,17 @@
 %% LCMV virtual channels
 %
-% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069
+% Vinding, M. C., & Oostenveld, R. (2022). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality. NeuroImage, 119165. https://doi.org/10.1016/j.neuroimage.2022.119165
 %
 % Calculate virtual channels in a set of predefined labels. Estimate
 % LCMV beamformer filters from evoked and apply to single trial epochs.
 
 clear all; close all;
-addpath '~/fieldtrip/fieldtrip/'
-ft_defaults
 
 %% Data paths
-data_path = '/home/mikkel/mri_warpimg/data/0177/170424';
+data_path = '~/mri_warpimg/data/0177/170424';
 ft_path   = '~/fieldtrip/fieldtrip/';
+addpath(ft_path);
+ft_defaults
 
 %% Load data
 fprintf('Loading data... ')
@@ -22,8 +22,8 @@ load(fullfile(data_path, 'evoked.mat'));
 atlas = ft_read_atlas(fullfile(ft_path, '/template/atlas/aal/ROI_MNI_V4.nii'));
 
 % Load MRI
-load(fullfile(data_path,'mri_org_resliced'));
-load(fullfile(data_path,'mri_warptmp'));
+load(fullfile(data_path, 'mri_org_resliced'));
+load(fullfile(data_path, 'mri_warptmp'));
 
 % Load headmodels and source spaces
 load(fullfile(data_path, 'headmodel_org.mat'));

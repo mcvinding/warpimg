@@ -1,6 +1,6 @@
 %% Plot headmodels 
 %
-% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.
+% Vinding, M. C., & Oostenveld, R. (2022). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality. NeuroImage, 119165. https://doi.org/10.1016/j.neuroimage.2022.119165
 %
 % Plot the headmodels (volume conductor models) created from the original
 % MRI and the warped template superimposed to compare geometry (Figure 3).
@@ -10,8 +10,8 @@ ft_defaults
 addpath('~/reliability_analysis/') % https://github.com/mcvinding/reliability_analysis
 
 %% Paths
-data_path = '/home/mikkel/mri_warpimg/data/0177/170424';
-out_path  = '/home/mikkel/mri_warpimg/figures';
+data_path = '~/mri_warpimg/data/0177/170424';
+out_path  = '~/mri_warpimg/figures';
 
 %% Load headmodels
 load(fullfile(data_path, 'headmodel_tmp.mat'))

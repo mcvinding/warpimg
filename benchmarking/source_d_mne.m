@@ -1,6 +1,6 @@
 %% MNE source reconstruction
 %
-% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069
+% Vinding, M. C., & Oostenveld, R. (2022). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality. NeuroImage, 119165. https://doi.org/10.1016/j.neuroimage.2022.119165
 %
 % Do MNE source reconstruction on evoked response. Plot results.
 %
@@ -15,8 +15,8 @@ addpath '~/fieldtrip/fieldtrip/'
 ft_defaults
 
 %% Paths
-data_path = '/home/mikkel/mri_warpimg/data/0177/170424';
-fs_subject_dir = '/home/mikkel/mri_warpimg/fs_subjects_dir';
+data_path 	   = '~/mri_warpimg/data/0177/170424';
+fs_subject_dir = '~/mri_warpimg/fs_subjects_dir';
 
 % Output filenames
 mneOrg_outFname = fullfile(data_path, 'mnesource_org.mat');

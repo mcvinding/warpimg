@@ -1,6 +1,6 @@
 %% Create headmodels 
 %
-% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069
+% Vinding, M. C., & Oostenveld, R. (2022). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality. NeuroImage, 119165. https://doi.org/10.1016/j.neuroimage.2022.119165
 %
 % Create headmodels (volume conductor models) from anatomical MRIs for MEG 
 % source analysis. This is done for the template MRI warped to subject and for
@@ -13,7 +13,7 @@ addpath '~/fieldtrip/fieldtrip/'
 ft_defaults
 
 %% Data paths
-data_path  = '/home/mikkel/mri_warpimg/data/0177/170424';
+data_path  = '~/mri_warpimg/data/0177/170424';
 
 %% Load MRI
 fprintf('Loading data... ')

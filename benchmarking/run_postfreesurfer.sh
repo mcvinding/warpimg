@@ -4,11 +4,11 @@
 #
 # The script ft_postfreesurferscript is part of FieldTrip and found in fieldtrip/bin/ft_postfreesurferscript
 
-export HCPPIPEDIR=/home/mikkel/HCPipelines/
-export SUBJECTS_DIR='/home/mikkel/mri_warpimg/fs_subjects_dir'
-export TEMPLATE_DIR='/home/mikkel/HCPipelines/HCPpipelines/global/templates/standard_mesh_atlases'
+export HCPPIPEDIR=~/HCPipelines/
+export SUBJECTS_DIR='~/mri_warpimg/fs_subjects_dir'
+export TEMPLATE_DIR='~/HCPipelines/HCPpipelines/global/templates/standard_mesh_atlases'
 
-#/home/mikkel/fieldtrip/fieldtrip/bin/ft_postfreesurferscript.sh $SUBJECTS_DIR 0177 $TEMPLATE_DIR
-/home/mikkel/fieldtrip/fieldtrip/bin/ft_postfreesurferscript.sh $SUBJECTS_DIR 0177warp $TEMPLATE_DIR
+#~/fieldtrip/fieldtrip/bin/ft_postfreesurferscript.sh $SUBJECTS_DIR 0177 $TEMPLATE_DIR
+~/fieldtrip/fieldtrip/bin/ft_postfreesurferscript.sh $SUBJECTS_DIR 0177warp $TEMPLATE_DIR
 
 #END

@@ -1,6 +1,6 @@
 %% Warp template MRI to subject MRI for creating source model
 %
-% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069
+% Vinding, M. C., & Oostenveld, R. (2022). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality. NeuroImage, 119165. https://doi.org/10.1016/j.neuroimage.2022.119165
 %
 % Import orignal MRI, align to MEG coordinate system and export as SPM 
 % readable file. Import template (Colin) and "normalize" the template to
@@ -9,13 +9,13 @@
 %% Paths
 % Change these paths to match you system and project setup.
 if ispc
-    raw_folder = 'Y:/workshop_source_reconstruction/20180206';
-    out_folder = 'Z:/mri_warpimg/data';
-    ftpath = 'C:\fieldtrip';
+    raw_folder = 'Y:/workshop_source_reconstruction/20180206'; 	% Folder with data
+    out_folder = 'Z:/mri_warpimg/data';							% Folder for output files
+    ftpath = 'C:\fieldtrip'; 									% FieldTrip folder
 else
-    raw_folder = '/home/share/workshop_source_reconstruction/20180206';
-    out_folder = '/home/mikkel/mri_warpimg/data/';
-    ftpath = '/home/mikkel/fieldtrip/fieldtrip';
+    raw_folder = '~/workshop_source_reconstruction/20180206';  	% Folder with data
+    out_folder = '~/mri_warpimg/data/'; 						% Folder for output files
+    ftpath = '~/fieldtrip/fieldtrip'; 							% FieldTrip folder
 end
 addpath(ftpath)
 ft_defaults 
