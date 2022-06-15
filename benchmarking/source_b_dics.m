@@ -1,6 +1,6 @@
 %% DICS source reconstruction of beta desync.
 % 
-% Vinding, M. C., & Oostenveld, R. (2021). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality [Preprint]. bioRxiv.org. https://doi.org/10.1101/2021.11.18.469069
+% Vinding, M. C., & Oostenveld, R. (2022). Sharing individualised template MRI data for MEG source reconstruction: A solution for open data while keeping subject confidentiality. NeuroImage, 119165. https://doi.org/10.1016/j.neuroimage.2022.119165%
 %
 % Do DICS source reconstruction of beta desynchronization. Calucalte CSD in
 % beta deysnchronization and similar length baseline period. Calculate
